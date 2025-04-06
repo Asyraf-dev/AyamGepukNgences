@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Received Orders</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 80%; margin: 20px auto; }
+        .orders-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .order { border: 1px solid #ccc; padding: 10px; width: 250px; border-radius: 5px; position: relative; }
+        .preparing { background-color: #ffcccc; position: relative; }
+        .ready { background-color: #ccffcc; position: relative; }
+        h2 { text-align: center; }
+        .active-orders { text-align: center; margin-bottom: 20px; font-weight: bold; }
+        .cooking-animation::after {
+            content: '\1F469\200D\1F373'; /* chef gegirl emoji */
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 20px;
+            animation: cook 1s infinite alternate;
+        }
+        .ready-animation::after {
+            content: '\1F374'; /* sudu emoji */
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 20px;
+            animation: ready 1s infinite alternate;
+        }
+        @keyframes cook {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
+        @keyframes ready {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, onChildAdded, update, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        const firebaseConfig = {
+  apiKey: "AIzaSyAUO2ZoVhSFEtAyJAP5r5zxu3kGqoIAyQ4",
+  authDomain: "ordersystem-d710a.firebaseapp.com",
+  databaseURL: "https://ordersystem-d710a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ordersystem-d710a",
+  storageBucket: "ordersystem-d710a.firebasestorage.app",
+  messagingSenderId: "741444965493",
+  appId: "1:741444965493:web:9991535a9105035c80943c",
+  measurementId: "G-4P6YQDH0LL"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const ordersRef = ref(db, 'orders/');
+
+        function displayOrder(order, orderId) {
+    const orderContainer = document.getElementById("orders");
+    const orderDiv = document.createElement("div");
+    orderDiv.classList.add("order", order.status === "ready" ? "ready" : "preparing");
+    if (order.status === "preparing") orderDiv.classList.add("cooking-animation");
+
+    orderDiv.innerHTML = `
+        <strong>Order Number:</strong> <span class="order-number">${order.queueNumber}</span><br>
+        <strong>Name:</strong> <span class="order-name">${order.name}</span><br>
+        <strong>Table:</strong> <span class="order-table">${order.table}</span><br>
+        <strong>Special Request:</strong> <span class="order-request">${order.request}</span><br>
+        <strong>Items:</strong> 
+        <ul class="order-items">
+            ${order.cart.map(item => `<li>${item.item}-${item.quantity} <br> AddOn: <br>(${item.addOns || "tiada"}) - RM${item.price * item.quantity}</li>`).join('')}
+        </ul>
+        <strong>Total Harga💰:</strong> <span class="order-total">RM${order.totalPrice}</span><br>
+        <strong>Time:</strong> <span class="order-time">${new Date(order.timestamp).toLocaleString()}</span><br>
+        <strong class="text-status">Status:</strong> <span class="order-status">${order.status || "preparing"}</span><br>
+        <button onclick="updateStatus('${orderId}', 'ready')">Mark as Ready</button>
+        <button onclick="updateStatus('${orderId}', 'preparing')">Mark as Preparing</button>
+        <button onclick="printOrder('${orderId}')">🖨️ Print</button>
+    `;
+    orderDiv.id = `order-${orderId}`;
+    orderContainer.prepend(orderDiv);
+}
+
+        
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Date,Time,Name,Table,Special Request,Items,Total Price,Status\n";
+            document.querySelectorAll(".order").forEach(orderDiv => {
+                const name = orderDiv.querySelector(".order-name")?.textContent.trim() || "";
+                const table = orderDiv.querySelector(".order-table")?.textContent.trim() || "";
+                const request = orderDiv.querySelector(".order-request")?.textContent.trim() || "";
+                const items = Array.from(orderDiv.querySelectorAll(".order-items li")).map(li => li.innerText).join(" | ") || "";
+                const totalPrice = orderDiv.querySelector(".order-total")?.textContent.trim() || "";
+                const time = orderDiv.querySelector(".order-time")?.textContent.trim() || "";
+                const status = orderDiv.querySelector(".order-status")?.textContent.trim() || "";
+                csvContent += `${time},${name},${table},${request},"${items}",${totalPrice},${status}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "orders.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const exportBtn = document.createElement("button");
+            exportBtn.textContent = "Export to CSV";
+            exportBtn.onclick = exportToCSV;
+            document.querySelector(".container").prepend(exportBtn);
+        });
+
+        
+
+        function updateActiveOrders() {
+            onValue(ordersRef, snapshot => {
+                let activeCount = 0;
+                snapshot.forEach(childSnapshot => {
+                    const order = childSnapshot.val();
+                    if (order.status !== "ready") {
+                        activeCount++;
+                    }
+                });
+                document.getElementById("active-orders").textContent = `Active Orders (${activeCount})`;
+            });
+        }
+
+        onChildAdded(ordersRef, snapshot => {
+            const order = snapshot.val();
+            displayOrder(order, snapshot.key);
+            updateActiveOrders();
+        });
+
+        window.updateStatus = function(orderId, status) {
+    const orderRef = ref(db, `orders/${orderId}`);
+    update(orderRef, { status });
+
+    const orderDiv = document.getElementById(`order-${orderId}`);
+    orderDiv.classList.toggle("ready", status === "ready");
+    orderDiv.classList.toggle("preparing", status === "preparing");
+    orderDiv.classList.toggle("cooking-animation", status === "preparing");
+    orderDiv.classList.toggle("ready-animation", status === "ready");
+
+    updateActiveOrders();
+
+    // If marked as ready, remove queueNumber after 5 minutes
+    if (status === "ready") {
+        setTimeout(() => {
+            update(orderRef, { queueNumber: null }).then(() => {
+                const queueSpan = orderDiv.querySelector("span"); 
+                if (queueSpan) {
+                    queueSpan.textContent = "N/A"; // Replace with "N/A" or remove it
+                }
+            }).catch(error => {
+                console.error("Error removing queue number:", error);
+            });
+        }, 100000); // 1 minutes from latest order akan reset
+    }
+};
+
+    </script>
+    <script>
+        function printOrder(orderId) {
+    const orderDiv = document.getElementById(`order-${orderId}`);
+    if (!orderDiv) return;
+
+    const orderItems = orderDiv.querySelector('.order-items');
+    const orderQuery = orderDiv.querySelector('.order-number');
+    const orderName = orderDiv.querySelector('.order-name');
+    const Table = orderDiv.querySelector('.order-table');
+    const Request = orderDiv.querySelector('.order-request');
+    const Price = orderDiv.querySelector('.order-total');
+    const orderReceive = orderDiv.querySelector('.order-time');
+
+    const printWindow = window.open('', '_blank', 'width=300,height=600');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Receipt - RESTORAN AYAM GEPUK NGENCES</title>
+            <style>
+                @media print {
+                    @page {
+                        size: 58mm auto; 
+                        margin: 0;
+                    }
+                    body {
+                        margin: 0;
+                    }
+                }
+                body {
+                    font-family: monospace;
+                    font-size: 12px;
+                    padding: 5px;
+                    width: 58mm;
+                    box-sizing: border-box;
+                    text-align: center;
+                }
+                .logo {
+                    width: 100px;
+                    display: block;
+                    margin: 0 auto 5px;
+                }
+                .line {
+                    border-top: 1px dashed #000;
+                    margin: 5px 0;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 10px;
+                    font-size: 10px;
+                }
+                ul {
+                    padding-left: 0;
+                    list-style: none;
+                    text-align: left;
+                }
+            </style>
+        </head>
+        <body>
+            <b>RESTORAN AYAM GEPUK NGENCES</b><br>
+            📍 **39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak**<br>
+            <div class="line"></div>
+            Order at: ${orderReceive.innerHTML}<br>
+            Order No: ${orderQuery.innerHTML}<br>
+            Name: ${orderName.innerHTML}<br>
+            Table: ${Table.innerHTML}<br>
+            Special Request: ${Request.innerHTML || 'None'}<br>
+            <div class="line"></div>
+            <b>Order List:</b><br>
+            <ul>${orderItems.innerHTML}</ul>
+            <div class="line"></div>
+            <b>Total:</b> ${Price.innerHTML}<br>
+            <div class="line"></div>
+            <div class="footer">
+                Terima kasih!<br>
+                Ayam Gepuk Ngences X Ngences Coffee<br>
+                Powered by electricaltechnologymy <br><br>
+                <i>This receipt prints automatically by the ordering system.</i><br>
+            </div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+}
+
+        </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Received Orders</h2>
+        <div class="active-orders" id="active-orders">Active Orders (0)</div>
+        <div class="orders-container" id="orders"></div>
+    </div>
+    
+</body>
+</html>
