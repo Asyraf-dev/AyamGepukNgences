@@ -177,74 +177,70 @@
     const printWindow = window.open('', '_blank', 'width=300,height=600');
     printWindow.document.write(`
         <html>
-        <head>
-            <title>Receipt - RESTORAN AYAM GEPUK NGENCES</title>
-            <style>
-                @media print {
-                    @page {
-                        size: 58mm auto; 
-                        margin: 0;
-                    }
-                    body {
-                        margin: 0;
-                    }
-                }
-                body {
-                    font-family: monospace;
-                    font-size: 12px;
-                    padding: 5px;
-                    width: 58mm;
-                    box-sizing: border-box;
-                    text-align: center;
-                }
-                .logo {
-                    width: 100px;
-                    display: block;
-                    margin: 0 auto 5px;
-                }
-                .line {
-                    border-top: 1px dashed #000;
-                    margin: 5px 0;
-                }
-                .footer {
-                    text-align: center;
-                    margin-top: 10px;
-                    font-size: 10px;
-                }
-                ul {
-                    padding-left: 0;
-                    list-style: none;
-                    text-align: left;
-                }
-            </style>
-        </head>
-        <body>
-            <b>RESTORAN AYAM GEPUK NGENCES</b><br>
-            📍 **39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak**<br>
-            <div class="line"></div>
-            Order at: ${orderReceive.innerHTML}<br>
-            Order No: ${orderQuery.innerHTML}<br>
-            Name: ${orderName.innerHTML}<br>
-            Table: ${Table.innerHTML}<br>
-            Special Request: ${Request.innerHTML || 'None'}<br>
-            <div class="line"></div>
-            <b>Order List:</b><br>
-            <ul>${orderItems.innerHTML}</ul>
-            <div class="line"></div>
-            <b>Total:</b> ${Price.innerHTML}<br>
-            <div class="line"></div>
-            <div class="footer">
-                Terima kasih!<br>
-                Ayam Gepuk Ngences X Ngences Coffee<br>
-                Powered by electricaltechnologymy <br><br>
-                <i>This receipt prints automatically by the ordering system.</i><br>
-            </div>
-        </body>
-        </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
+        <html>
+<head>
+    <title>Receipt</title>
+    <meta name="viewport" content="width=220, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        @media print {
+            @page {
+                size: 58mm auto;
+                margin: 0;
+            }
+            body {
+                margin: 0;
+            }
+        }
+        body {
+            font-family: monospace;
+            font-size: 12px;
+            padding: 5px;
+            width: 220px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .line {
+            border-top: 1px dashed #000;
+            margin: 5px 0;
+        }
+        ul {
+            padding-left: 0;
+            list-style: none;
+            text-align: left;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <b>RESTORAN AYAM GEPUK NGENCES</b><br>
+    📍 39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak<br>
+    <div class="line"></div>
+    Order at: ${orderReceive.innerHTML}<br>
+    Order No: ${orderQuery.innerHTML}<br>
+    Name: ${orderName.innerHTML}<br>
+    Table: ${Table.innerHTML}<br>
+    Request: ${Request.innerHTML || 'None'}<br>
+    <div class="line"></div>
+    <b>Items:</b>
+    <ul>${orderItems.innerHTML}</ul>
+    <div class="line"></div>
+    <b>Total:</b> ${Price.innerHTML}<br>
+    <div class="line"></div>
+    <div class="footer">
+        Terima kasih!<br>
+        Ayam Gepuk Ngences X Ngences Coffee<br>
+        Powered by electricaltechnologymy<br>
+    </div>
+</body>
+</html>
+`);
+printWindow.document.close();
+printWindow.focus();
+printWindow.print();
 }
 
         </script>
