@@ -191,7 +191,7 @@
                 }
                 body {
                     font-family: monospace;
-                    font-size: 12px;
+                    font-size: 10px;
                     padding: 5px;
                     width: 58mm;
                     box-sizing: border-box;
@@ -220,16 +220,16 @@
         </head>
         <body>
             <b>RESTORAN AYAM GEPUK NGENCES</b><br>
-            📍 **39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak**<br>
+            39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak**<br>
             <div class="line"></div>
             Order at: ${orderReceive.innerHTML}<br>
             Order No: ${orderQuery.innerHTML}<br>
             Name: ${orderName.innerHTML}<br>
             Table: ${Table.innerHTML}<br>
-            Special Request: ${Request.innerHTML || 'None'}<br>
+            Special Request: ${Request.innerHTML || 'None'}<br><br>
             <div class="line"></div>
             <b>Order List:</b><br>
-            <ul>${orderItems.innerHTML}</ul>
+            <ul>${orderItems.innerHTML}</ul><br>
             <div class="line"></div>
             <b>Total:</b> ${Price.innerHTML}<br>
             <div class="line"></div>
