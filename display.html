@@ -163,86 +163,61 @@
     </script>
 <script>
         function printOrder(orderId) {
-    const orderDiv = document.getElementById(`order-${orderId}`);
-    if (!orderDiv) return;
-
-    const orderItems = orderDiv.querySelector('.order-items');
-    const orderQuery = orderDiv.querySelector('.order-number');
-    const orderName = orderDiv.querySelector('.order-name');
-    const Table = orderDiv.querySelector('.order-table');
-    const Request = orderDiv.querySelector('.order-request');
-    const Price = orderDiv.querySelector('.order-total');
-    const orderReceive = orderDiv.querySelector('.order-time');
-
-    const printWindow = window.open('', '_blank', 'width=300,height=600');
-    printWindow.document.write(`
-        <html>
-        <html>
-<head>
-    <title>Receipt</title>
-    <meta name="viewport" content="width=220, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <style>
-        @media print {
-            @page {
-                size: 58mm auto;
-                margin: 0;
+            const orderDiv = document.getElementById(`order-${orderId}`);
+            if (!orderDiv) return;
+        
+            const orderItems = orderDiv.querySelector('.order-items');
+            const orderQuery = orderDiv.querySelector('.order-number');
+            const orderName = orderDiv.querySelector('.order-name');
+            const Table = orderDiv.querySelector('.order-table');
+            const Request = orderDiv.querySelector('.order-request');
+            const Price = orderDiv.querySelector('.order-total');
+            const orderReceive = orderDiv.querySelector('.order-time');
+        
+            const receiptText = `
+        RESTORAN AYAM GEPUK NGENCES
+        39, Laluan BG Transit 2, Kampung Bendera
+        30200 Batu Gajah, Perak
+        ------------------------------
+        Order at : ${orderReceive.innerHTML}
+        Order No : ${orderQuery.innerHTML}
+        Name     : ${orderName.innerHTML}
+        Table    : ${Table.innerHTML}
+        Request  : ${Request?.innerHTML || 'None'}
+        ------------------------------
+        ORDER LIST:
+        ${orderItems.innerText}
+        ------------------------------
+        Total    : ${Price.innerHTML}
+        ------------------------------
+        Terima kasih!
+        Ayam Gepuk Ngences X Ngences Coffee
+        Powered by electricaltechnologymy
+        `.trim();
+        
+            const isAndroid = /android/i.test(navigator.userAgent);
+            const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        
+            if (isAndroid) {
+                // RawBT or Rongta Android (if supports link)
+                const url = `rawbt:${encodeURIComponent(receiptText)}`;
+                window.location.href = url;
+            } else if (isIOS) {
+                // For iOS, show the text and let user copy/paste into Rongta app
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html><head><title>Print</title></head>
+                    <body>
+                        <pre style="font-family: monospace; font-size: 14px;">${receiptText}</pre>
+                        <p style="font-size:12px;">📋 Long press to copy, then paste into the Rongta app to print.</p>
+                    </body></html>
+                `);
+                printWindow.document.close();
+                printWindow.focus();
+            } else {
+                alert("Unsupported platform. Please use desktop or mobile.");
             }
-            body {
-                margin: 0;
-            }
         }
-        body {
-            font-family: monospace;
-            font-size: 12px;
-            padding: 5px;
-            width: 220px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .line {
-            border-top: 1px dashed #000;
-            margin: 5px 0;
-        }
-        ul {
-            padding-left: 0;
-            list-style: none;
-            text-align: left;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 10px;
-        }
-    </style>
-</head>
-<body>
-    <b>RESTORAN AYAM GEPUK NGENCES</b><br>
-    📍 39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak<br>
-    <div class="line"></div>
-    Order at: ${orderReceive.innerHTML}<br>
-    Order No: ${orderQuery.innerHTML}<br>
-    Name: ${orderName.innerHTML}<br>
-    Table: ${Table.innerHTML}<br>
-    Request: ${Request.innerHTML || 'None'}<br>
-    <div class="line"></div>
-    <b>Items:</b>
-    <ul>${orderItems.innerHTML}</ul>
-    <div class="line"></div>
-    <b>Total:</b> ${Price.innerHTML}<br>
-    <div class="line"></div>
-    <div class="footer">
-        Terima kasih!<br>
-        Ayam Gepuk Ngences X Ngences Coffee<br>
-        Powered by electricaltechnologymy<br>
-    </div>
-</body>
-</html>
-`);
-printWindow.document.close();
-printWindow.focus();
-printWindow.print();
-}
-
         </script>
 
 </head>
