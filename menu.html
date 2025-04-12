@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Menu Visibility Control</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAUO2ZoVhSFEtAyJAP5r5zxu3kGqoIAyQ4",
+      authDomain: "ordersystem-d710a.firebaseapp.com",
+      databaseURL: "https://ordersystem-d710a-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ordersystem-d710a",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const visibilityRef = ref(db, "menuVisibility");
+
+    const items = [
+      { id: "menuItem1", name: "Set Ayam Gepuk Peha(Sambal Kacang)", category: "Food(set)" },
+      { id: "menuItem2", name: "Set Ayam Gepuk Kepak(Sambal Kacang)", category: "Food(set)" },
+      { id: "menuItem3", name: "Set Ayam Gepuk Peha", category: "Food(set)" },
+      { id: "menuItem4", name: "Set Ayam Gepuk Kepak", category: "Food(set)" },
+      { id: "menuItem5", name: "Set Lele", category: "Food(set)" },
+      { id: "menuItem6", name: "Set Daging Balado", category: "Food(set)" },
+      { id: "menuItem7", name: "Bakso Biasa", category: "Food(set)" },
+      { id: "menuItem8", name: "Bakso Beranak Telur", category: "Food(set)" },
+      { id: "menuItem9", name: "Bakso Mercun", category: "Food(set)" },
+      { id: "menuItem10", name: "Bakso Special", category: "Food(set)" },
+      { id: "menuItem11", name: "Ayam Sahaja", category: "Ala-Carte" },
+      { id: "menuItem12", name: "Lele Sahaja", category: "Ala-Carte" },
+      { id: "menuItem13", name: "Daging Sahaja", category: "Ala-Carte" },
+      { id: "menuItem14", name: "Bakso Kosong", category: "Ala-Carte" },
+      { id: "menuItem15", name: "Sambal Gepuk", category: "Ala-Carte" },
+      { id: "menuItem16", name: "Sambal Balado", category: "Ala-Carte" },
+      { id: "menuItem17", name: "Es Buah", category: "Air Sejuk" },
+      { id: "menuItem18", name: "Teh O Panas", category: "Air Panas" },
+      { id: "menuItem19", name: "Teh O Ais", category: "Air Sejuk" },
+      { id: "menuItem20", name: "Kopi O Panas", category: "Air Panas" },
+      { id: "menuItem21", name: "Kopi O Ais", category: "Air Sejuk" },
+      { id: "menuItem22", name: "Nescafe O Panas", category: "Air Panas" },
+      { id: "menuItem23", name: "Nescafe O Ais", category: "Air Sejuk" },
+      { id: "menuItem24", name: "Teh Panas", category: "Air Panas" },
+      { id: "menuItem25", name: "Teh Ais", category: "Air Sejuk" },
+      { id: "menuItem26", name: "Kopi Panas", category: "Air Panas" },
+      { id: "menuItem27", name: "Kopi Ais", category: "Air Sejuk" },
+      { id: "menuItem28", name: "Nescafe Panas", category: "Air Panas" },
+      { id: "menuItem29", name: "Nescafe Ais", category: "Air Sejuk" },
+      { id: "menuItem30", name: "Sirap Panas", category: "Air Panas" },
+      { id: "menuItem31", name: "Sirap Ais", category: "Air Sejuk" },
+      { id: "menuItem32", name: "Sirap Selasih Panas", category: "Air Panas" },
+      { id: "menuItem33", name: "Sirap Selasih Sejuk", category: "Air Sejuk" },
+      { id: "menuItem34", name: "Sirap Limau Panas", category: "Air Panas" },
+      { id: "menuItem35", name: "Sirap Limau Ais", category: "Air Sejuk" },
+      { id: "menuItem36", name: "Sirap Laici Panas", category: "Air Panas" },
+      { id: "menuItem37", name: "Sirap Laici Ais", category: "Air Sejuk" },
+      { id: "menuItem38", name: "Teh O Limau Panas", category: "Air Panas" },
+      { id: "menuItem39", name: "Teh O Limau Ais", category: "Air Sejuk" },
+      { id: "menuItem40", name: "Teh O Laici Panas", category: "Air Panas" },
+      { id: "menuItem41", name: "Teh O Laici Ais", category: "Air Sejuk" },
+      { id: "menuItem42", name: "Sirap Bandung Panas", category: "Air Panas" },
+      { id: "menuItem43", name: "Sirap Bandung Ais", category: "Air Sejuk" },
+      { id: "menuItem44", name: "Sirap Bandung Cincau Panas", category: "Air Panas" },
+      { id: "menuItem45", name: "Sirap Bandung Cincau Ais", category: "Air Sejuk" },
+      { id: "menuItem46", name: "Teh Cincau Panas", category: "Air Panas" },
+      { id: "menuItem47", name: "Teh Cincau Ais", category: "Air Sejuk" },
+      { id: "menuItem48", name: "Limau Panas", category: "Air Panas" },
+      { id: "menuItem49", name: "Limau Ais", category: "Air Sejuk" },
+      { id: "menuItem50", name: "Sunquick Panas", category: "Air Panas" },
+      { id: "menuItem51", name: "Sunquick Ais", category: "Air Sejuk" },
+      { id: "menuItem52", name: "Sunquick Laici Panas", category: "Air Panas" },
+      { id: "menuItem53", name: "Sunquick Laici Ais", category: "Air Sejuk" },
+      { id: "menuItem54", name: "Laici Panas", category: "Air Panas" },
+      { id: "menuItem55", name: "Laici Ais", category: "Air Sejuk" },
+      { id: "menuItem56", name: "ExtraJoss Anggur Susu", category: "Air Sejuk" },
+      { id: "menuItem57", name: "ExtraJoss Anggur Gula", category: "Air Sejuk" },
+      { id: "menuItem58", name: "ExtraJoss Mangga Susu", category: "Air Sejuk" },
+      { id: "menuItem59", name: "ExtraJoss Anggur Gula", category: "Air Sejuk" },
+      { id: "menuItem60", name: "Air Panas", category: "Air Panas" },
+      { id: "menuItem61", name: "Air Kosong", category: "Air Sejuk" },
+
+      
+
+      
+    ];
+
+    const tableBody = document.getElementById("menuTableBody");
+    const categoryFilter = document.getElementById("categoryFilter");
+
+    let currentVisibility = {}; // Store visibility state globally
+
+function renderItems(filterCategory = "All", visibility = {}) {
+  tableBody.innerHTML = "";
+  items
+    .filter(item => filterCategory === "All" || item.category === filterCategory)
+    .forEach(({ id, name }) => {
+      const row = document.createElement("tr");
+
+      const nameCell = document.createElement("td");
+      nameCell.textContent = name;
+      row.appendChild(nameCell);
+
+      const toggleCell = document.createElement("td");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = id;
+      checkbox.checked = visibility[id] || false;
+      toggleCell.appendChild(checkbox);
+      row.appendChild(toggleCell);
+
+      checkbox.addEventListener("change", () => {
+        set(ref(db, `menuVisibility/${id}`), checkbox.checked);
+      });
+
+      tableBody.appendChild(row);
+    });
+}
+
+let isSelectAll = true;
+
+document.getElementById("selectAllBtn").addEventListener("click", () => {
+  const currentCategory = categoryFilter.value;
+
+  items
+    .filter(item => currentCategory === "All" || item.category === currentCategory)
+    .forEach(({ id }) => {
+      const checkbox = document.getElementById(id);
+      if (checkbox) {
+        checkbox.checked = isSelectAll;
+        set(ref(db, `menuVisibility/${id}`), isSelectAll);
+      }
+    });
+
+  const btn = document.getElementById("selectAllBtn");
+  btn.textContent = isSelectAll ? "Unselect All (Visible Items)" : "Select All (Visible Items)";
+  isSelectAll = !isSelectAll;
+});
+
+categoryFilter.addEventListener("change", () => {
+  renderItems(categoryFilter.value, currentVisibility); // <-- Use stored visibility
+});
+
+onValue(visibilityRef, (snapshot) => {
+  currentVisibility = snapshot.val() || {};
+  renderItems(categoryFilter.value, currentVisibility);
+});
+
+const toggle = document.getElementById("darkModeToggle");
+
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+  toggle.checked = true;
+}
+
+toggle.addEventListener("change", () => {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+});
+
+
+
+  </script>
+
+  <style>
+    body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4;
+  padding: 30px;
+  color: #333;
+}
+
+h2 {
+  color: #222;
+  margin-bottom: 20px;
+}
+
+/* Category Dropdown */
+select {
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.3s ease;
+  margin-bottom: 20px;
+}
+
+select:focus {
+  border-color: #333;
+  outline: none;
+}
+
+/* Action Button (already styled) */
+.action-button {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  margin: 10px 0 20px 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: #555;
+  transform: scale(1.03);
+}
+
+.action-button:active {
+  transform: scale(0.98);
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+th {
+  background-color: #333;
+  color: white;
+  padding: 14px;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+tr:hover td {
+  background-color: #fafafa;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+/* Theme Switch Toggle */
+.theme-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.theme-switch input {
+  display: none;
+}
+
+.slider {
+  width: 50px;
+  height: 26px;
+  background-color: #ccc;
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  left: 2px;
+  top: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+input:checked + .slider {
+  background-color: #333;
+}
+
+input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+.label-text {
+  font-size: 16px;
+  color: #333;
+}
+
+/* Dark mode styles */
+body.dark {
+  background-color: #1e1e1e;
+  color: #eee;
+}
+
+body.dark select,
+body.dark .action-button,
+body.dark table {
+  background-color: #2c2c2c;
+  color: #eee;
+  border-color: #444;
+}
+
+body.dark table th {
+  background-color: #111;
+}
+
+body.dark table td {
+  border-color: #444;
+}
+
+body.dark .label-text {
+  color: #eee;
+}
+.control-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  background: #fff;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.control-panel label {
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+.control-panel select,
+.control-panel .action-button {
+  margin: 0;
+}
+
+/* Optional: Improve label-text spacing in switch */
+.theme-switch .label-text {
+  margin-left: 4px;
+}
+
+
+
+    
+  </style>
+<body>
+  <h2>Toggle Menu Visibility</h2>
+
+  <!-- Control Panel Wrapper -->
+  <div class="control-panel">
+    <label for="categoryFilter">Filter by Category:</label>
+    <select id="categoryFilter">
+      <option value="All">All</option>
+      <option value="Food(set)">Food (set)</option>
+      <option value="Ala-Carte">Ala-Carte</option>
+      <option value="Air Panas">Air Panas</option>
+      <option value="Air Sejuk">Air Sejuk</option>
+      <option value="Little Ngences (food)">Little Ngences (food)</option>
+      <option value="Little Ngences (drink)">Little Ngences (drink)</option>
+    </select>
+
+    <label class="theme-switch">
+      <input type="checkbox" id="darkModeToggle">
+      <span class="slider"></span>
+      <span class="label-text">Dark Mode</span>
+    </label>
+
+    <button id="selectAllBtn" class="action-button">Select All (Visible Items)</button>
+  </div>
+
+  <!-- Menu Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Menu Item</th>
+        <th>Visible</th>
+      </tr>
+    </thead>
+    <tbody id="menuTableBody">
+      <!-- Items populated by script -->
+    </tbody>
+  </table>
+</body>
+
+</html>
