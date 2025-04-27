@@ -5,59 +5,197 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Received Orders</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 80%; margin: 20px auto; }
-        .orders-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        .order { border: 1px solid #ccc; padding: 10px; width: 250px; border-radius: 5px; position: relative; }
-        .preparing { background-color: #ffcccc; position: relative; }
-        .ready { background-color: #ccffcc; position: relative; }
-        .received {background-color: #e0f7fa; /* Light blue for received */position: relative;}
-
-        h2 { text-align: center; }
-        .active-orders { text-align: center; margin-bottom: 20px; font-weight: bold; }
-        .cooking-animation::after {
-            content: '\1F469\200D\1F373'; /* chef gegirl emoji */
-            position: absolute;
-            top: 5px;
-            right: 10px;
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+    
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+    
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 700;
+        }
+    
+        .active-orders {
+            text-align: center;
+            margin-bottom: 30px;
             font-size: 20px;
-            animation: cook 1s infinite alternate;
+            font-weight: 600;
+            color: #777;
         }
-        .ready-animation::after {
-            content: '\1F374'; /* sudu emoji */
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            font-size: 20px;
-            animation: ready 1s infinite alternate;
+    
+        .orders-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            animation: fadeIn 1s ease;
         }
-        @keyframes cook {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.2); }
+    
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes ready {
-            0% { opacity: 0.5; }
-            100% { opacity: 1; }
+    
+        .order {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 300px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        .delete-btn {
+    
+        .order:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+    
+        .order::before {
+    content: '';
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: transparent;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    color: #f44336;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(to bottom, #03a9f4, #00e5ff);
+    transition: background 0.5s ease;
+    border-radius: 10px 0 0 10px;
 }
 
-.delete-btn:hover {
-    color: #d32f2f;
+/* Specific colors for each status */
+.order.received::before {
+    background: linear-gradient(to bottom, #03a9f4, #00e5ff);
 }
 
+.order.preparing::before {
+    background: linear-gradient(to bottom, #ffa726, #fb8c00);
+}
+
+.order.ready::before {
+    background: linear-gradient(to bottom, #66bb6a, #43a047);
+}
+
+    
+        .order .section {
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+    
+        .order .section:last-of-type {
+            border-bottom: none;
+        }
+    
+        .order strong {
+            color: #555;
+            font-weight: 600;
+        }
+    
+        .order span, .order ul {
+            color: #222;
+        }
+    
+        .order-items {
+            padding-left: 15px;
+            margin: 8px 0;
+        }
+    
+        .order-items li {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+    
+        .delete-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        font-size: 13px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: background-color 0.3s ease;
+       }
+
+       .delete-btn:hover {
+        background-color: #d32f2f;
+       }
+    
+        button {
+            margin-top: 8px;
+            margin-right: 5px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        button:hover {
+            background-color: #1976d2;
+        }
+    
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 12px;
+            color: white;
+            font-weight: 500;
+            background-color: #aaa;
+            margin-left: 5px;
+        }
+    
+        .badge.ready { background-color: #4caf50; }
+        .badge.preparing { background-color: #ff9800; }
+        .badge.received { background-color: #03a9f4; }
+        .badge {
+        text-transform: capitalize;
+        }
+    
+        .custom-btn {
+            background-color: #4caf50;
+        }
+    
+        .custom-btn:hover {
+            background-color: #43a047;
+        }
+    
+        .danger-btn {
+            background-color: #f44336;
+        }
+    
+        .danger-btn:hover {
+            background-color: #d32f2f;
+        }
     </style>
+    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, onChildAdded, update, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, onChildAdded, update, onValue, remove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
         const firebaseConfig = {
   apiKey: "AIzaSyAUO2ZoVhSFEtAyJAP5r5zxu3kGqoIAyQ4",
@@ -81,26 +219,38 @@
     if (order.status === "preparing") orderDiv.classList.add("cooking-animation");
 
     orderDiv.innerHTML = `
-        <button class="delete-btn" onclick="confirmDelete('${orderId}')">🗑️</button>
-        <strong>Order Number:</strong> <span class="order-number">${order.queueNumber}</span><br>
-        <strong>Name:</strong> <span class="order-name">${order.name}</span><br>
-        <strong>Table:</strong> <span class="order-table">${order.table}</span><br>
-        <strong>Special Request:</strong> <span class="order-request">${order.request}</span><br>
-        <strong>Items:</strong> 
+        <button class="delete-btn" onclick="confirmDelete('${orderId}')"><i class="fas fa-trash-alt"></i> X </button>
+
+        <div class="section"><strong><i class="fas fa-receipt"></i> Order Number:</strong> <span class="order-number">${order.queueNumber ?? "N/A"}</span></div>
+        <div class="section"><strong><i class="fas fa-user"></i> Name:</strong> <span class="order-name">${order.name}</span></div>
+        <div class="section"><strong><i class="fas fa-chair"></i> Table:</strong> <span class="order-table">${order.table}</span></div>
+        <div class="section"><strong><i class="fas fa-clipboard-list"></i> Special Request:</strong> <span class="order-request">${order.request}</span></div>
+
+        <strong><i class="fas fa-shopping-basket"></i> Items:</strong>
         <ul class="order-items">
-            ${order.cart.map(item => `<li>${item.item}-${item.quantity} <br> AddOn: <br>(${item.addOns || "tiada"}) - RM${item.price * item.quantity}</li>`).join('')}
+            ${order.cart.map(item => `
+                <li>
+                    ${item.item} - ${item.quantity}<br>
+                    AddOn:<br> (${item.addOns || "tiada"}) - RM${item.price * item.quantity}
+                </li>
+            `).join('')}
         </ul>
-        <strong>Total Harga💰:</strong> <span class="order-total">RM${order.totalPrice}</span><br>
-        <strong>Time:</strong> <span class="order-time">${new Date(order.timestamp).toLocaleString()}</span><br>
-        <strong class="text-status">Status:</strong> <span class="order-status">${order.status || "preparing"}</span><br>
-        <button onclick="updateStatus('${orderId}', 'ready')">Mark as Ready</button>
-        <button onclick="updateStatus('${orderId}', 'preparing')">Mark as Preparing</button>
-        <button onclick="printOrder('${orderId}')">🖨️ Print</button>
-        <button onclick="copyOrderToClipboard('${orderId}')">📋 Copy</button>
+
+        <div class="section"><strong><i class="fas fa-coins"></i> Total Harga:</strong> <span class="order-total">RM${order.totalPrice}</span></div>
+        <div class="section"><strong><i class="fas fa-clock"></i> Time:</strong> <span class="order-time">${new Date(order.timestamp).toLocaleString()}</span></div>
+        <div class="section"><strong><i class="fas fa-box"></i> Status:</strong> <span class="order-status">${order.status || "preparing"}</span> 
+            <span class="badge ${order.status}">${order.status}</span>
+        </div>
+
+        <button onclick="updateStatus('${orderId}', 'ready')"><i class="fas fa-check-circle"></i> Ready</button>
+        <button onclick="updateStatus('${orderId}', 'preparing')"><i class="fas fa-fire"></i> Preparing</button>
+        <button onclick="printOrder('${orderId}')"><i class="fas fa-print"></i> Print</button>
+        <button onclick="copyOrderToClipboard('${orderId}')"><i class="fas fa-copy"></i> Copy</button>
     `;
     orderDiv.id = `order-${orderId}`;
     orderContainer.prepend(orderDiv);
 }
+
 
         
         function exportToCSV() {
@@ -125,12 +275,69 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            const exportBtn = document.createElement("button");
-            exportBtn.textContent = "Export to CSV";
-            exportBtn.onclick = exportToCSV;
-            document.querySelector(".container").prepend(exportBtn);
+    const exportBtn = document.createElement("button");
+    exportBtn.innerHTML = "📁 Export to CSV";
+    exportBtn.onclick = () => exportWithSpinner(exportBtn);
+    exportBtn.classList.add("custom-btn");
+
+    const removeAllQueueBtn = document.createElement("button");
+    removeAllQueueBtn.textContent = "🗑️ Remove All Queue Numbers";
+    removeAllQueueBtn.onclick = removeAllQueueNumbers;
+    removeAllQueueBtn.classList.add("custom-btn", "danger-btn");
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.justifyContent = "center";
+    buttonContainer.style.gap = "10px";
+    buttonContainer.style.marginBottom = "20px";
+
+    buttonContainer.appendChild(exportBtn);
+    buttonContainer.appendChild(removeAllQueueBtn);
+
+    document.querySelector(".container").prepend(buttonContainer);
+});
+
+// New wrapper function
+function exportWithSpinner(button) {
+    const originalText = button.innerHTML;
+    button.innerHTML = `<span class="spinner"></span> Exporting...`;
+    button.disabled = true;
+
+    // Simulate a short loading (since export is quick)
+    setTimeout(() => {
+        exportToCSV();
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }, 500); // 0.5 second spinner effect
+}
+
+
+async function removeAllQueueNumbers() {
+    const confirmation = confirm("Are you sure you want to REMOVE all order numbers?");
+    if (!confirmation) return;
+
+    const ordersRef = ref(db, "orders/");
+
+    onValue(ordersRef, (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+            const queueNumberPath = ref(db, `orders/${childSnapshot.key}/queueNumber`);
+            remove(queueNumberPath)
+                .then(() => {
+                    console.log(`Removed queueNumber from order: ${childSnapshot.key}`);
+                })
+                .catch((error) => {
+                    console.error(`Error removing queueNumber:`, error);
+                });
         });
 
+        // After finishing all removals, update the DOM
+        document.querySelectorAll(".order-number").forEach(span => {
+            span.textContent = "N/A";
+        });
+
+        alert("✅ All queue numbers removed successfully.");
+    }, { onlyOnce: true });
+}
         
 
         function updateActiveOrders() {
@@ -162,32 +369,46 @@
 });
 
 
-        window.updateStatus = function(orderId, status) {
+window.updateStatus = function(orderId, status) {
     const orderRef = ref(db, `orders/${orderId}`);
     update(orderRef, { status });
 
     const orderDiv = document.getElementById(`order-${orderId}`);
-    orderDiv.classList.toggle("ready", status === "ready");
-    orderDiv.classList.toggle("preparing", status === "preparing");
-    orderDiv.classList.toggle("cooking-animation", status === "preparing");
-    orderDiv.classList.toggle("ready-animation", status === "ready");
+    
+    // Update the card background
+    orderDiv.classList.remove("ready", "preparing", "received");
+    orderDiv.classList.add(status);
+
+    // Update status text
+    const statusSpan = orderDiv.querySelector(".order-status");
+    if (statusSpan) {
+        statusSpan.textContent = status;
+    }
+
+    // Update badge text and color
+    const badgeSpan = orderDiv.querySelector(".badge");
+    if (badgeSpan) {
+        badgeSpan.textContent = status;
+        badgeSpan.className = `badge ${status}`;
+    }
 
     updateActiveOrders();
 
-    // If marked as ready, remove queueNumber after 5 minutes
+    // Auto-remove queue number after ready (optional)
     if (status === "ready") {
         setTimeout(() => {
             update(orderRef, { queueNumber: null }).then(() => {
-                const queueSpan = orderDiv.querySelector("span"); 
+                const queueSpan = orderDiv.querySelector(".order-number"); 
                 if (queueSpan) {
-                    queueSpan.textContent = "N/A"; // Replace with "N/A" or remove it
+                    queueSpan.textContent = "N/A";
                 }
             }).catch(error => {
                 console.error("Error removing queue number:", error);
             });
-        }, 100000); // 1 minutes from latest order akan reset
+        }, 100000); // 1 minute
     }
 };
+
 
     </script>
     <script type="module">
