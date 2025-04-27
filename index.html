@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
     <title>Ayam Gepuk Ngences X Little Ngences</title>
     <style>
@@ -72,19 +73,79 @@
           cart.push({ item, price, quantity, addOns });
           updateCartView();
           showNotification(`${item} (${addOns}) - ${quantity} Add To Cart`);
+          updateCartCount(); // Update cart count here
+
         };
+        // Function to update the cart count
+function updateCartCount() {
+    const cartCountElement = document.getElementById("cartCount");
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCountElement.textContent = totalItems > 0 ? totalItems : "";
+}
+
         
         function updateCartView() {
-          const cartContainer = document.getElementById("cart-items");
-          const totalPriceContainer = document.getElementById("total-price");
-          cartContainer.innerHTML = "";
-          let total = 0;
-          cart.forEach((order, index) => {
-            total += order.price * order.quantity;
-            cartContainer.innerHTML += `<p>${order.item} x ${order.quantity} - RM${order.price * order.quantity} (Add-ons: ${order.addOns.join(", ")}) <button onclick="removeFromCart(${index})">Remove</button></p>`;
-          });
-          totalPriceContainer.innerText = `Total: RM${total}`;
-        }
+  const cartContainer = document.getElementById("cart-items");
+  const totalPriceContainer = document.getElementById("total-price");
+  cartContainer.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((order, index) => {
+    total += order.price * order.quantity;
+
+    cartContainer.innerHTML += `
+      <div class="cart-item-card">
+        <div class="cart-item-top">
+          <strong>${order.item}</strong>
+          <button class="remove-cart-btn" onclick="removeFromCart(${index})">X</button>
+        </div>
+        <div class="cart-item-bottom">
+          <div class="quantity-controls">
+            <button class="qty-btn" data-index="${index}" data-action="decrease">-</button>
+            <span>${order.quantity}</span>
+            <button class="qty-btn" data-index="${index}" data-action="increase">+</button>
+          </div>
+          <div class="item-price">
+            RM ${(order.price * order.quantity).toFixed(2)}
+          </div>
+        </div>
+        ${order.addOns.length > 0 ? `<div class="addons">Add-ons: ${order.addOns.join(", ")}</div>` : ""}
+      </div>
+    `;
+  });
+
+  totalPriceContainer.innerText = `Total: RM${total.toFixed(2)}`;
+}
+
+// Event delegation for button clicks
+document.getElementById("cart-items").addEventListener("click", function (e) {
+  if (e.target && e.target.classList.contains("qty-btn")) {
+    const index = parseInt(e.target.dataset.index);  // Ensure the index is an integer
+    const action = e.target.dataset.action;
+    if (action === "increase") {
+      increaseQuantity(index);  // Use index as number
+    } else if (action === "decrease") {
+      decreaseQuantity(index);  // Use index as number
+    }
+  }
+});
+
+// Modify the increaseQuantity and decreaseQuantity functions to call updateCartCount
+function increaseQuantity(index) {
+    cart[index].quantity += 1;
+    updateCartView();
+    updateCartCount(); // Update cart count here
+}
+
+function decreaseQuantity(index) {
+    if (cart[index].quantity > 1) {
+        cart[index].quantity -= 1;
+    } else {
+        cart.splice(index, 1);
+    }
+    updateCartView();
+    updateCartCount(); // Update cart count here
+}
         
         document.getElementById("goToCartBtn").addEventListener("click", function () {
           window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
@@ -93,6 +154,7 @@
         window.removeFromCart = function (index) {
           cart.splice(index, 1);
           updateCartView();
+          updateCartCount(); // Update cart count here
         };
         
         function showNotification(message) {
@@ -121,53 +183,61 @@
         }
         
         window.submitOrder = function () {
-          const submitButton = document.getElementById("submit-button");
-          submitButton.disabled = true;
-          submitButton.innerHTML = "Submitting...";
-        
-          const name = document.getElementById("customer-name").value;
-          const table = document.getElementById("table-number").value;
-          const request = document.getElementById("special-request").value;
-        
-          if (cart.length === 0 || !name || !table) {
-            alert("Please fill all details and add items to cart.");
-            submitButton.disabled = false;
-            submitButton.innerHTML = "Submit Order";
+    const submitButton = document.getElementById("submit-button");
+    submitButton.disabled = true;
+    submitButton.innerHTML = "Submitting...";
+
+    const name = document.getElementById("customer-name").value;
+    const table = document.getElementById("table-number").value;
+    const request = document.getElementById("special-request").value;
+
+    if (cart.length === 0 || !name || !table) {
+        alert("Please fill all details and add items to cart.");
+        submitButton.disabled = false;
+        submitButton.innerHTML = "Submit Order";
+        return;
+    }
+
+    getLastQueueNumber().then(lastQueue => {
+        const queueNumber = Number(lastQueue) + 1;
+
+        if (isNaN(queueNumber)) {
+            console.error("Invalid queue number:", queueNumber);
+            alert("Error: Queue number is invalid. Please try again.");
             return;
-          }
-        
-          getLastQueueNumber().then(lastQueue => {
-            const queueNumber = Number(lastQueue) + 1;
-        
-            if (isNaN(queueNumber)) {
-              console.error("Invalid queue number:", queueNumber);
-              alert("Error: Queue number is invalid. Please try again.");
-              return;
-            }
-        
-            let totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-            const orderDetails = {
-              queueNumber, name, table, request, cart, totalPrice, timestamp: new Date().toISOString()
-            };
-        
-            push(ref(db, 'orders/'), orderDetails).then(() => {
-              alert(`Order placed successfully✅\nAssalamualaikum dan Salam Sejahtera Mr/Mrs ${name}\nNombor Giliran Anda ialah ${queueNumber}\nNama:${name}\nMeja:${table}\nSpecial Request:${request}\nMenu Pilihan:${orderDetails.cart.map(item => `${item.item} ${item.addOns} x ${item.quantity} (RM${item.price})`).join('\n')}\nTotal Harga:RM${totalPrice}`);
-              cart = [];
-              updateCartView();
-            }).catch(error => console.error("Error:", error))
-              .finally(() => {
+        }
+
+        let totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        const orderDetails = {
+            queueNumber, name, table, request, cart, totalPrice, timestamp: new Date().toISOString()
+        };
+
+        push(ref(db, 'orders/'), orderDetails).then(() => {
+            alert(`Order placed successfully✅\nAssalamualaikum dan Salam Sejahtera Mr/Mrs ${name}\nNombor Giliran Anda ialah ${queueNumber}\nNama:${name}\nMeja:${table}\nSpecial Request:${request}\nMenu Pilihan:${orderDetails.cart.map(item => `${item.item} ${item.addOns} x ${item.quantity} (RM${item.price})`).join('\n')}\nTotal Harga:RM${totalPrice}`);
+            cart = [];
+            updateCartView();
+        }).catch(error => console.error("Error:", error))
+            .finally(() => {
                 submitButton.disabled = false;
                 submitButton.innerHTML = "Submit Order";
-              });
-        
-            fetch('https://discordapp.com/api/webhooks/1344888111800385546/Jja0S1EBXS0y1KCaKsHI6Ae6ETKkgrvr4qJ5HbgjCY7hE43S7WnFuTtcVGJ5_vtXJtlY', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ content: `Order placed successfully✅\nAssalamualaikum dan Salam Sejahtera Mr/Mrs ${name}\nNombor Giliran Anda ialah ${queueNumber}\nNama:${name}\nMeja:${table}\nSpecial Request:${request}\nMenu Pilihan:${orderDetails.cart.map(item => `${item.item} ${item.addOns} x ${item.quantity} (RM${item.price})`).join('\n')}\nTotal Harga:RM${totalPrice}` })
             });
-          });
-        };
+
+        // Ask the customer if they want to download the receipt
+        const downloadReceipt = confirm("Do you want to download the receipt?");
+        if (downloadReceipt) {
+            generateReceiptPDF(orderDetails);
+        }
+
+        // Sending order details to Discord
+        fetch('https://discordapp.com/api/webhooks/1344888111800385546/Jja0S1EBXS0y1KCaKsHI6Ae6ETKkgrvr4qJ5HbgjCY7hE43S7WnFuTtcVGJ5_vtXJtlY', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: `Order placed successfully✅\nAssalamualaikum dan Salam Sejahtera Mr/Mrs ${name}\nNombor Giliran Anda ialah ${queueNumber}\nNama:${name}\nMeja:${table}\nSpecial Request:${request}\nMenu Pilihan:${orderDetails.cart.map(item => `${item.item} ${item.addOns} x ${item.quantity} (RM${item.price})`).join('\n')}\nTotal Harga:RM${totalPrice}` })
+        });
+    });
+};
+
         
         // 📦 Firebase Visibility Handler
         const visibilityRef = ref(db, "menuVisibility");
@@ -226,6 +296,65 @@
             applyFilter("all");
           }
         });
+
+        function generateReceiptPDF(orderDetails) {
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF();
+
+    // Setting the font size for the title
+    doc.setFontSize(20);
+    doc.text("RESTORAN AYAM GEPUK NGENCES", 20, 20);
+    doc.setFontSize(12);
+
+    // Store the current date for "Order at" field
+    const orderDate = new Date().toLocaleString();
+
+    // Get the order query, name, table, and special request (use appropriate data from your form)
+    const orderQuery = `Order No: ${orderDetails.queueNumber}`;
+    const orderName = `Name: ${orderDetails.name}`;
+    const tableNumber = `Table: ${orderDetails.table}`;
+    const specialRequest = `Special Request: ${orderDetails.request || 'None'}`;
+
+    // Generate the order list
+    let orderItems = orderDetails.cart.map(item => {
+        return `${item.item} ${item.addOns.join(", ") || 'No Add-ons'} x ${item.quantity} (RM${(item.price * item.quantity).toFixed(2)})`;
+    }).join("\n");
+
+    // Get the total price
+    const totalPrice = `Total: RM${orderDetails.totalPrice.toFixed(2)}`;
+
+    // Combining all the text content
+    const textContent = `
+    RESTORAN AYAM GEPUK NGENCES
+    39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak
+
+    Order at: ${orderDate}
+    ${orderQuery}
+    ${orderName}
+    ${tableNumber}
+    ${specialRequest}
+    ----------------------------------------
+    Order List:
+    ${orderItems}
+    ----------------------------------------
+    ${totalPrice}
+    ----------------------------------------
+
+    Terima kasih!
+    Ayam Gepuk Ngences X Ngences Coffee
+    Powered by electricaltechnologymy
+
+    (This receipt was copied from the system)
+    `.trim();
+
+    // Adding the receipt content to the PDF document
+    doc.text(textContent, 20, 30);
+
+    // Save the PDF
+    doc.save(`Receipt_${orderDetails.queueNumber}.pdf`);
+}
+
         </script>
         
 </head>
