@@ -3,8 +3,8 @@ body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #f7f1e3; /* Warm light beige background */
+    color: #5C4033; /* Warm dark brown */
 }
 
 .container {
@@ -14,18 +14,19 @@ body {
     padding: 20px;
 }
 
+/* Order Form Container */
 .order-form-container {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #fff8ec; /* Slightly creamy */
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(140, 100, 60, 0.15);
 }
 
 h1, h2 {
     text-align: center;
-    color: #222;
+    color: #8B4513; /* Warm brown */
 }
 
 /* Menu Items */
@@ -40,8 +41,8 @@ h1, h2 {
     background: #fff;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 2px 8px rgba(140, 100, 60, 0.15);
+    transition: transform 0.3s ease-in-out;
 }
 
 .menuItem:hover {
@@ -54,29 +55,31 @@ h1, h2 {
     border-radius: 8px;
 }
 
+/* Add to Cart Button */
 .add-to-cart {
     display: block;
     width: 100%;
     padding: 12px;
-    background: #28a745;
+    background: linear-gradient(135deg, #d97706, #a0522d); /* Warm gradient */
     color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
     transition: background 0.3s;
 }
 
 .add-to-cart:hover {
-    background: #218838;
+    background: linear-gradient(135deg, #a0522d, #8B4513);
 }
 
 /* Cart & Form Styling */
 .cart-container, form {
-    background: #fff;
+    background: #fff8ec;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(140, 100, 60, 0.1);
 }
 
 form input, form button {
@@ -88,41 +91,34 @@ form input, form button {
 }
 
 form button {
-    background: #007bff;
+    background: linear-gradient(135deg, #d97706, #a0522d);
     color: white;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
 }
 
 form button:hover {
-    background: #0056b3;
+    background: linear-gradient(135deg, #a0522d, #8B4513);
 }
 
 /* Popup Overlay */
 .popup-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     background: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
 }
 
+/* Popup Content */
 .popup-content {
-    background: #fff;
+    background: #fff8ec;
     padding: 20px;
     border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
-    width: 90%;
+    box-shadow: 0 4px 8px rgba(140, 100, 60, 0.2);
 }
 
+/* Close Button */
 .close {
     font-size: 24px;
+    color: #8B4513;
     cursor: pointer;
 }
 
@@ -137,17 +133,17 @@ form button:hover {
     }
 }
 
+/* Success Message */
 .success-message {
+    background-color: #28a745;
+    padding: 10px 20px;
+    border-radius: 8px;
     position: fixed;
     top: 20px;
     right: 20px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.5s;
 }
 .container {
     max-width: 900px;
@@ -229,23 +225,7 @@ input[type="checkbox"] {
     accent-color: #28a745;
 }
 
-.add-to-cart {
-    margin-top: 20px;
-    padding: 14px;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    width: 100%;
-    transition: 0.3s ease;
-}
 
-.add-to-cart:hover {
-    background: #218838;
-}
  /* Styles for the popup overlay */
  .popup-overlay {
     display: none; /* Hidden by default */
@@ -364,34 +344,32 @@ footer a:hover {
     font-weight: bold;
 }
 .cart-button {
-    background-color: #28a745;
+    background: linear-gradient(135deg, #d97706, #a0522d);
     color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+    font-weight: bold;
+    padding: 15px 20px;
     border-radius: 5px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
     position: fixed;
     bottom: 20px;
     left: 20px;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
 }
 
 .cart-button:hover {
-    background-color: #218838;
+    background: linear-gradient(135deg, #a0522d, #8B4513);
 }
+
+/* Cart Count Badge */
 .cart-count {
-    background-color: red;
-    color: white;
+    background-color: #c0392b;
     font-size: 14px;
     font-weight: bold;
     border-radius: 50%;
     padding: 3px 7px;
-    margin-left: 5px;
-    display: none; /* Hide when no items */
 }
 
 
@@ -420,14 +398,98 @@ footer a:hover {
     height: 50%;
     background: rgba(255, 255, 255, 0.2);
 }
-
-.ribbon-button:hover {
-    background: darkred;
+.cart-item-card {
+    background: #fff8ec;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(140, 100, 60, 0.1);
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 2px solid #ccc;  /* Outline added */
+    position: relative; /* Add relative positioning to the card */
 }
+.cart-item-card:hover {
+    border-color: #4CAF50;  /* Outline color changes on hover */
+    box-shadow: 0 4px 10px rgba(140, 100, 60, 0.2);  /* Optional: darken shadow on hover */
+}
+
+
+.cart-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-item-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.qty-btn {
+    background: #d97706;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.qty-btn:hover {
+    background: #a0522d;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #5C4033;
+}
+
+.addons {
+    font-size: 12px;
+    color: #8B4513;
+    margin-top: 5px;
+}
+
+/* Remove button at the top-right with fixed size */
+.remove-cart-btn {
+    background: none;
+    color: #c0392b; /* Red color */
+    border: 1px solid #c0392b;
+    width: 20px; /* Fixed width */
+    height: 20px; /* Fixed height */
+    font-size: 14px; /* Font size for readability */
+    border-radius: 50%; /* Circular button */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s ease-in-out;
+    position: absolute;
+    top: 5px; /* Positioning it close to the top */
+    right: 5px; /* Positioning it close to the right */
+    padding: 0; /* Remove padding for fixed size */
+}
+
+.remove-cart-btn:hover {
+    background: #c0392b;
+    color: white;
+}
+
 
 button {
     width: 100%;
-    background-color: red;
+    background: linear-gradient(135deg, #d97706, #a0522d);
     color: white;
     border: none;
     padding: 10px;
@@ -553,3 +615,49 @@ input[type="text"] {
     box-shadow: 0px 0px 10px rgba(255, 204, 0, 0.7);
 }
 
+.cart {
+    background: #f4f4f4;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    font-family: 'Arial', sans-serif;
+}
+
+.cart h3 {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+#cart-items {
+    margin-bottom: 15px;
+}
+
+#total-price {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #e74c3c;
+    font-weight: bold;
+    text-align: center;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #3498db;
+    outline: none;
+}
