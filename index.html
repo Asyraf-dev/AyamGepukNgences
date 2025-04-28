@@ -85,37 +85,43 @@ function updateCartCount() {
 
         
         function updateCartView() {
-  const cartContainer = document.getElementById("cart-items");
-  const totalPriceContainer = document.getElementById("total-price");
-  cartContainer.innerHTML = "";
-  let total = 0;
+            const cartContainer = document.getElementById("cart-items");
+cartContainer.innerHTML = "";
+let total = 0;
 
-  cart.forEach((order, index) => {
-    total += order.price * order.quantity;
+cart.forEach((order, index) => {
+  total += order.price * order.quantity;
 
-    cartContainer.innerHTML += `
-      <div class="cart-item-card">
-        <div class="cart-item-top">
-          <strong>${order.item}</strong>
-          <button class="remove-cart-btn" onclick="removeFromCart(${index})">X</button>
-        </div>
-        <div class="cart-item-bottom">
-          <div class="quantity-controls">
-            <button class="qty-btn" data-index="${index}" data-action="decrease">-</button>
-            <span>${order.quantity}</span>
-            <button class="qty-btn" data-index="${index}" data-action="increase">+</button>
-          </div>
-          <div class="item-price">
-            RM ${(order.price * order.quantity).toFixed(2)}
-          </div>
-        </div>
-        ${order.addOns.length > 0 ? `<div class="addons">Add-ons: ${order.addOns.join(", ")}</div>` : ""}
+  const cartItem = document.createElement("div");
+  cartItem.className = "cart-item-card";
+
+  cartItem.innerHTML = `
+    <div class="cart-item-top">
+      <strong>${order.item}</strong>
+      <button class="remove-cart-btn" onclick="removeFromCart(${index})">X</button>
+    </div>
+    <div class="cart-item-bottom">
+      <div class="quantity-controls">
+        <button class="qty-btn" data-index="${index}" data-action="decrease">-</button>
+        <span>${order.quantity}</span>
+        <button class="qty-btn" data-index="${index}" data-action="increase">+</button>
       </div>
-    `;
-  });
+      <div class="item-price">
+        RM ${(order.price * order.quantity).toFixed(2)}
+      </div>
+    </div>
+    ${order.addOns.length > 0 ? `<div class="addons">Add-ons: ${order.addOns.join(", ")}</div>` : ""}
+  `;
 
-  totalPriceContainer.innerText = `Total: RM${total.toFixed(2)}`;
-}
+  // ➡️ Add the "pop" class manually
+  cartItem.classList.add("pop");
+
+  cartContainer.appendChild(cartItem);
+
+  // Remove the pop class after the animation so it doesn't repeat when updating quantity
+  setTimeout(() => cartItem.classList.remove("pop"), 300);
+});
+        }
 
 // Event delegation for button clicks
 document.getElementById("cart-items").addEventListener("click", function (e) {
@@ -152,10 +158,20 @@ function decreaseQuantity(index) {
         });
         
         window.removeFromCart = function (index) {
-          cart.splice(index, 1);
-          updateCartView();
-          updateCartCount(); // Update cart count here
-        };
+    const cartContainer = document.getElementById("cart-items");
+    const cartItems = cartContainer.querySelectorAll(".cart-item-card");
+
+    if (cartItems[index]) {
+        cartItems[index].classList.add("slide-out");
+
+        setTimeout(() => {
+            cart.splice(index, 1);
+            updateCartView();
+            updateCartCount();
+        }, 400); // wait for animation (400ms same as CSS)
+    }
+};
+
         
         function showNotification(message) {
           const notification = document.getElementById("notification");
