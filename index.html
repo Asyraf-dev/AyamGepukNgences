@@ -184,17 +184,22 @@ function decreaseQuantity(index) {
         
         window.submitOrder = function () {
     const submitButton = document.getElementById("submit-button");
+    const loadingOverlay = document.getElementById("loading-overlay");
+    const successOverlay = document.getElementById("success-overlay");
+
     submitButton.disabled = true;
     submitButton.innerHTML = "Submitting...";
+    loadingOverlay.style.display = "flex";
 
-    const name = document.getElementById("customer-name").value;
-    const table = document.getElementById("table-number").value;
-    const request = document.getElementById("special-request").value;
+    const name = document.getElementById("customer-name").value.trim();
+    const table = document.getElementById("table-number").value.trim();
+    const request = document.getElementById("special-request").value.trim();
 
     if (cart.length === 0 || !name || !table) {
         alert("Please fill all details and add items to cart.");
         submitButton.disabled = false;
         submitButton.innerHTML = "Submit Order";
+        loadingOverlay.style.display = "none";
         return;
     }
 
@@ -204,36 +209,50 @@ function decreaseQuantity(index) {
         if (isNaN(queueNumber)) {
             console.error("Invalid queue number:", queueNumber);
             alert("Error: Queue number is invalid. Please try again.");
+            submitButton.disabled = false;
+            submitButton.innerHTML = "Submit Order";
+            loadingOverlay.style.display = "none";
             return;
         }
 
         let totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-        const orderDetails = {
-            queueNumber, name, table, request, cart, totalPrice, timestamp: new Date().toISOString()
-        };
+        const orderDetails = { queueNumber, name, table, request, cart, totalPrice, timestamp: new Date().toISOString() };
 
-        push(ref(db, 'orders/'), orderDetails).then(() => {
-            alert(`Order placed successfully✅\nAssalamualaikum dan Salam Sejahtera Mr/Mrs ${name}\nNombor Giliran Anda ialah ${queueNumber}\nNama:${name}\nMeja:${table}\nSpecial Request:${request}\nMenu Pilihan:${orderDetails.cart.map(item => `${item.item} ${item.addOns} x ${item.quantity} (RM${item.price})`).join('\n')}\nTotal Harga:RM${totalPrice}`);
-            cart = [];
-            updateCartView();
-        }).catch(error => console.error("Error:", error))
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.innerHTML = "Submit Order";
+        // After successful push
+push(ref(db, 'orders/'), orderDetails).then(() => {
+    cart = [];
+    updateCartView();
+
+    loadingOverlay.style.display = "none";
+    successOverlay.style.display = "flex";
+
+    // 🔔 Play success sound
+    document.getElementById("success-sound").play();
+
+    // 🕒 Show success overlay for 4 seconds
+    setTimeout(() => {
+        successOverlay.style.display = "none";
+    }, 4000);
+
+    const downloadReceipt = confirm("Do you want to download your receipt?");
+    if (downloadReceipt) {
+        generateReceiptPDF(orderDetails);
+    }
+
+            fetch('https://discordapp.com/api/webhooks/your_webhook_here', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: `Order placed: ${name} (Table ${table})` })
             });
 
-        // Ask the customer if they want to download the receipt
-        const downloadReceipt = confirm("Do you want to download the receipt?");
-        if (downloadReceipt) {
-            generateReceiptPDF(orderDetails);
-        }
-
-        // Sending order details to Discord
-        fetch('https://discordapp.com/api/webhooks/1344888111800385546/Jja0S1EBXS0y1KCaKsHI6Ae6ETKkgrvr4qJ5HbgjCY7hE43S7WnFuTtcVGJ5_vtXJtlY', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: `Order placed successfully✅\nAssalamualaikum dan Salam Sejahtera Mr/Mrs ${name}\nNombor Giliran Anda ialah ${queueNumber}\nNama:${name}\nMeja:${table}\nSpecial Request:${request}\nMenu Pilihan:${orderDetails.cart.map(item => `${item.item} ${item.addOns} x ${item.quantity} (RM${item.price})`).join('\n')}\nTotal Harga:RM${totalPrice}` })
+        }).catch(error => {
+            console.error("Error:", error);
+            alert("Failed to submit order. Please try again!");
+        }).finally(() => {
+            submitButton.disabled = false;
+            submitButton.innerHTML = "Submit Order";
+            loadingOverlay.style.display = "none";
         });
     });
 };
@@ -359,6 +378,7 @@ function decreaseQuantity(index) {
         
 </head>
 <body>
+    <audio id="success-sound" src="success.mp3" preload="auto"></audio>
     <div class="order-form-container">
         <h1>SELAMAT DATANG KE RESTORAN AYAM GEPUK</h1>
         If item not display means it out of stock...
@@ -2627,7 +2647,23 @@ function decreaseQuantity(index) {
     
 </div>
     
-        
+        <!-- 1. Loading Overlay -->
+<div id="loading-overlay" style="display: none;">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div class="loading-text">Submitting your order...</div>
+    </div>
+  </div>
+  
+  <!-- 2. Success Overlay -->
+  <div id="success-overlay" style="display: none;">
+    <div class="success-content">
+      <div class="success-icon">✅</div>
+      <div class="success-text">Order Submitted Successfully!</div>
+    </div>
+  </div>
+
+
         <button id="goToCartBtn" class="cart-button">
             🛒 Go to Cart <span id="cartCount" class="cart-count" ></span>
         </button>
