@@ -59,23 +59,40 @@
         let cart = [];
         
         window.addToCart = function (button) {
-          const itemElement = button.closest(".menuItem");
-          const item = itemElement.dataset.name;
-          let price = parseFloat(itemElement.dataset.price);
-          const quantity = parseInt(itemElement.querySelector(".quantity").value) || 1;
-        
-          let addOns = [];
-          itemElement.querySelectorAll(".addon-checkbox:checked").forEach(addon => {
-            price += parseFloat(addon.dataset.price);
-            addOns.push(addon.name);
-          });
-        
-          cart.push({ item, price, quantity, addOns });
-          updateCartView();
-          showNotification(`${item} (${addOns}) - ${quantity} Add To Cart`);
-          updateCartCount(); // Update cart count here
+  // Show loading state
+  button.classList.add("add-to-cart-loading");
+  button.disabled = true;
 
-        };
+  const originalText = button.innerHTML;
+  button.innerHTML = "Adding...";
+
+  const itemElement = button.closest(".menuItem");
+  const item = itemElement.dataset.name;
+  const imgElement = itemElement.querySelector("img");
+  if (imgElement) animateAddToCart(imgElement);
+
+  let price = parseFloat(itemElement.dataset.price);
+  const quantity = parseInt(itemElement.querySelector(".quantity").value) || 1;
+
+  let addOns = [];
+  itemElement.querySelectorAll(".addon-checkbox:checked").forEach(addon => {
+    price += parseFloat(addon.dataset.price);
+    addOns.push(addon.name);
+  });
+
+  cart.push({ item, price, quantity, addOns });
+  updateCartView();
+  showNotification(`${item} (${addOns}) - ${quantity} Add To Cart`);
+  updateCartCount();
+
+  // Revert button after 1s
+  setTimeout(() => {
+    button.classList.remove("add-to-cart-loading");
+    button.disabled = false;
+    button.innerHTML = originalText;
+  }, 1000);
+};
+
         // Function to update the cart count
 function updateCartCount() {
     const cartCountElement = document.getElementById("cartCount");
@@ -389,6 +406,32 @@ push(ref(db, 'orders/'), orderDetails).then(() => {
     // Save the PDF
     doc.save(`Receipt_${orderDetails.queueNumber}.pdf`);
 }
+
+function animateAddToCart(imgElement) {
+  const cartIcon = document.getElementById("goToCartBtn");
+  const imgRect = imgElement.getBoundingClientRect();
+  const cartRect = cartIcon.getBoundingClientRect();
+
+  const flyImg = imgElement.cloneNode(true);
+  flyImg.classList.add("fly-img");
+  document.body.appendChild(flyImg);
+
+  flyImg.style.left = imgRect.left + "px";
+  flyImg.style.top = imgRect.top + "px";
+
+  // Calculate translation
+  const tx = cartRect.left - imgRect.left;
+  const ty = cartRect.top - imgRect.top;
+
+  flyImg.style.setProperty('--tx', tx + 'px');
+  flyImg.style.setProperty('--ty', ty + 'px');
+  flyImg.style.animation = 'flyToCart 1s forwards';
+
+  setTimeout(() => {
+    flyImg.remove();
+  }, 1000);
+}
+
 
         </script>
         
