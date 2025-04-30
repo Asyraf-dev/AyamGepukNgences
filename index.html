@@ -101,44 +101,92 @@ function updateCartCount() {
 }
 
         
-        function updateCartView() {
-            const cartContainer = document.getElementById("cart-items");
-cartContainer.innerHTML = "";
-let total = 0;
+function updateCartView() {
+    const cartContainer = document.getElementById("cart-items");
+    cartContainer.innerHTML = "";
+    let total = 0;
 
-cart.forEach((order, index) => {
-  total += order.price * order.quantity;
+    const grouped = {};
+    cart.forEach(item => {
+        const menuItemElement = document.querySelector(`.menuItem[data-name="${item.item}"]`);
+        const category = menuItemElement?.dataset.category || "Others";
+        if (!grouped[category]) grouped[category] = [];
+        grouped[category].push(item);
+    });
 
-  const cartItem = document.createElement("div");
-  cartItem.className = "cart-item-card";
+    const categoryOrder = ["food", "Side Dish", "Air Panas", "Air Sejuk", "Little Ngences Food", "Little Ngences Drink", "Others"];
+    const categoryIcons = {
+        "food": "🍽️",
+        "Side Dish": "🧂",
+        "Air Panas": "☕",
+        "Air Sejuk": "🥤",
+        "Little Ngences Food": "🍩",
+        "Little Ngences Drink": "🧋",
+        "Others": "📦"
+    };
 
-  cartItem.innerHTML = `
-    <div class="cart-item-top">
-      <strong>${order.item}</strong>
-      <button class="remove-cart-btn" onclick="removeFromCart(${index})">X</button>
-    </div>
-    <div class="cart-item-bottom">
-      <div class="quantity-controls">
-        <button class="qty-btn" data-index="${index}" data-action="decrease">-</button>
-        <span>${order.quantity}</span>
-        <button class="qty-btn" data-index="${index}" data-action="increase">+</button>
-      </div>
-      <div class="item-price">
-        RM ${(order.price * order.quantity).toFixed(2)}
-      </div>
-    </div>
-    ${order.addOns.length > 0 ? `<div class="addons">Add-ons: ${order.addOns.join(", ")}</div>` : ""}
-  `;
+    categoryOrder.forEach(category => {
+        const items = grouped[category];
+        if (!items) return;
 
-  // ➡️ Add the "pop" class manually
-  cartItem.classList.add("pop");
+        // Category section wrapper
+        const section = document.createElement("div");
+        section.style.border = "2px solid #c5f7c5"; // Light green border
+        section.style.background = "#f9fff9";        // Light greenish background
+        section.style.margin = "16px 0";
+        section.style.borderRadius = "10px";
+        section.style.padding = "10px 15px";
 
-  cartContainer.appendChild(cartItem);
 
-  // Remove the pop class after the animation so it doesn't repeat when updating quantity
-  setTimeout(() => cartItem.classList.remove("pop"), 300);
-});
-        }
+        // Category title
+        const categoryHeader = document.createElement("h3");
+        categoryHeader.textContent = `${categoryIcons[category] || "🗂️"} ${category.toUpperCase()}`;
+        categoryHeader.style.marginBottom = "10px";
+        categoryHeader.style.color = "#333";
+        categoryHeader.style.fontSize = "18px";
+        categoryHeader.style.borderBottom = "1px solid #ccc";
+        categoryHeader.style.paddingBottom = "5px";
+        section.appendChild(categoryHeader);
+
+        // Item cards
+        items.forEach((order, i) => {
+            const index = cart.indexOf(order);
+            total += order.price * order.quantity;
+
+            const cartItem = document.createElement("div");
+            cartItem.className = "cart-item-card";
+            cartItem.style.border = "1px solid #ccc";
+            cartItem.style.borderRadius = "8px";
+            cartItem.style.padding = "10px";
+            cartItem.style.marginBottom = "10px";
+            cartItem.style.background = "#fff";
+            cartItem.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
+
+            cartItem.innerHTML = `
+                <div class="cart-item-top" style="display: flex; justify-content: space-between;">
+                    <strong>${order.item}</strong>
+                    <button class="remove-cart-btn" onclick="removeFromCart(${index})">X</button>
+                </div>
+                <div class="cart-item-bottom" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                    <div class="quantity-controls" style="display: flex; gap: 8px; align-items: center;">
+                        <button class="qty-btn" data-index="${index}" data-action="decrease">-</button>
+                        <span>${order.quantity}</span>
+                        <button class="qty-btn" data-index="${index}" data-action="increase">+</button>
+                    </div>
+                    <div class="item-price">
+                        RM ${(order.price * order.quantity).toFixed(2)}
+                    </div>
+                </div>
+                ${order.addOns.length > 0 ? `<div class="addons" style="margin-top: 5px; font-size: 13px; color: #555;">Add-ons: ${order.addOns.join(", ")}</div>` : ""}
+            `;
+
+            section.appendChild(cartItem);
+        });
+
+        cartContainer.appendChild(section);
+    });
+}
+
 
 // Event delegation for button clicks
 document.getElementById("cart-items").addEventListener("click", function (e) {
@@ -369,36 +417,53 @@ push(ref(db, 'orders/'), orderDetails).then(() => {
     const specialRequest = `Special Request: ${orderDetails.request || 'None'}`;
 
     // Generate the order list
-    let orderItems = orderDetails.cart.map(item => {
-        return `${item.item} ${item.addOns.join(", ") || 'No Add-ons'} x ${item.quantity} (RM${(item.price * item.quantity).toFixed(2)})`;
-    }).join("\n");
+    // Group cart items by category
+let groupedItems = {};
+orderDetails.cart.forEach(item => {
+    const menuItem = document.querySelector(`.menuItem[data-name="${item.item}"]`);
+    const category = menuItem?.dataset.category || "Others";
+    if (!groupedItems[category]) groupedItems[category] = [];
+    groupedItems[category].push(item);
+});
 
-    // Get the total price
-    const totalPrice = `Total: RM${orderDetails.totalPrice.toFixed(2)}`;
+const categoryOrder = ["food", "Side Dish", "Air Panas", "Air Sejuk", "Little Ngences Food", "Little Ngences Drink", "Others"];
 
-    // Combining all the text content
-    const textContent = `
-    RESTORAN AYAM GEPUK NGENCES
-    39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak
+let orderItems = "";
+categoryOrder.forEach(category => {
+    if (groupedItems[category]) {
+        orderItems += `\n${category.toUpperCase()}\n`;
+        groupedItems[category].forEach(item => {
+            const addOns = item.addOns.length ? ` [${item.addOns.join(", ")}]` : "";
+            orderItems += `- ${item.item}${addOns} x${item.quantity} (RM${(item.price * item.quantity).toFixed(2)})\n`;
+        });
+    }
+});
 
-    Order at: ${orderDate}
-    ${orderQuery}
-    ${orderName}
-    ${tableNumber}
-    ${specialRequest}
-    ----------------------------------------
-    Order List:
-    ${orderItems}
-    ----------------------------------------
-    ${totalPrice}
-    ----------------------------------------
+const totalPrice = `Total: RM${orderDetails.totalPrice.toFixed(2)}`;
 
-    Terima kasih!
-    Ayam Gepuk Ngences X Ngences Coffee
-    Powered by electricaltechnologymy
+const textContent = `
+RESTORAN AYAM GEPUK NGENCES
+39, Laluan BG Transit 2, Kampung Bendera, 30200 Batu Gajah, Perak
 
-    (This receipt was copied from the system)
-    `.trim();
+Order at: ${orderDate}
+${orderQuery}
+${orderName}
+${tableNumber}
+${specialRequest}
+----------------------------------------
+Order List:
+${orderItems}
+----------------------------------------
+${totalPrice}
+----------------------------------------
+
+Terima kasih!
+Ayam Gepuk Ngences X Ngences Coffee
+Powered by electricaltechnologymy
+
+(This receipt was copied from the system)
+`.trim();
+
 
     // Adding the receipt content to the PDF document
     doc.text(textContent, 20, 30);
