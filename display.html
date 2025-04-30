@@ -218,6 +218,184 @@
     orderDiv.classList.add("order", order.status === "ready" ? "ready" : order.status === "preparing" ? "preparing" : "received");
     if (order.status === "preparing") orderDiv.classList.add("cooking-animation");
 
+    // Manually define category lookup by item name
+    const categoryLookup = {
+        "Set Ayam Gepuk Peha(Sambal Kacang)": "food",
+        "Set Ayam Gepuk Kepak (Sambal Kacang)": "food",
+        "Set Ayam Gepuk Peha": "food",
+        "Set Ayam Gepuk Kepak": "food",
+        "Set Lele": "food",
+        "Set Daging Balado": "food",
+        "Bakso": "food",
+        "Bakso Beranak Telur": "food",
+        "Bakso Mercun": "food",
+        "Bakso Special": "food",
+
+
+        "Ayam Sahaja": "Side Dish",
+        "Lele Sahaja": "Side Dish",
+        "Daging Sahaja": "Side Dish",
+        "Bakso Kosong": "Side Dish",
+        "Sambal Gepuk": "Side Dish",
+        "Sambal Balado": "Side Dish",
+
+
+
+        "Teh O Panas": "Air Panas",
+        "Kopi O Panas": "Air Panas",
+        "Nescafe O Panas": "Air Panas",
+        "Teh Panas": "Air Panas",
+        "Kopi Panas": "Air Panas",
+        "Nescafe Panas": "Air Panas",
+        "Sirap Panas": "Air Panas",
+        "Sirap Selasih Panas": "Air Panas",
+        "Sirap Limau Panas": "Air Panas",
+        "Sirap Laici Panas": "Air Panas",
+        "Teh O Limau Panas": "Air Panas",
+        "Teh O Laici Panas": "Air Panas",
+        "Sirap Bandung Panas": "Air Panas",
+        "Sirap Bandung Cincau Panas": "Air Panas",
+        "Teh Cincau Panas": "Air Panas",
+        "Limau Panas": "Air Panas",
+        "Sanquick Panas": "Air Panas",
+        "Sanquick Laici Panas": "Air Panas",
+        "Laici Panas": "Air Panas",
+        "Air Panas": "Air Panas",
+       
+
+
+
+
+        "Es Buah": "Air Sejuk",
+        "Teh O Ais": "Air Sejuk",
+        "Kopi O Ais": "Air Sejuk",
+        "Nescafe O Ais": "Air Sejuk",
+        "Teh Ais": "Air Sejuk",
+        "Kopi Ais": "Air Sejuk",
+        "Nescafe Ais": "Air Sejuk",
+        "Sirap Ais": "Air Sejuk",
+        "Sirap Selasih Ais": "Air Sejuk",
+        "Sirap Limau Ais": "Air Sejuk",
+        "Sirap Laici Ais": "Air Sejuk",
+        "Teh O Limau Ais": "Air Sejuk",
+        "Teh O Laici Ais": "Air Sejuk",
+        "Sirap Bandung Ais": "Air Sejuk",
+        "Sirap Bandung Cincau Ais": "Air Sejuk",
+        "Teh Cincau Ais": "Air Sejuk",
+        "Limau Ais": "Air Sejuk",
+        "Sanquick Ais": "Air Sejuk",
+        "Sanquick Laici Ais": "Air Sejuk",
+        "Laici Ais": "Air Sejuk",
+        "ExtraJoss Anggur Susu": "Air Sejuk",
+        "ExtraJoss Anggur": "Air Sejuk",
+        "ExtraJoss Mangga Susu": "Air Sejuk",
+        "ExtraJoss Mangga Gula": "Air Sejuk",
+        "Air Kosong": "Air Sejuk",
+        
+
+
+        "Buttermilk Chicken with rice": "Little Ngences Food",
+        "Sweet Chilli Chicken with rice": "Little Ngences Food",
+        "Soy Garlic Chicken with rice": "Little Ngences Food",
+        "Teriyaki Chicken with rice": "Little Ngences Food",
+        "Spaghetti Samyang Chicken": "Little Ngences Food",
+        "Spaghetti Tomyam Chicken": "Little Ngences Food",
+        "Spaghetti Buttermilk Chicken": "Little Ngences Food",
+        "Spaghetti Carbonara Chicken": "Little Ngences Food",
+        "Crispy Chicken Burger": "Little Ngences Food",
+        "Beef Burger": "Little Ngences Food",
+        "Baby Pancake": "Little Ngences Food",
+        "Croissant @ Croffle": "Little Ngences Food",
+        "Teobokki": "Little Ngences Food",
+        "Chicken Popcorn": "Little Ngences Food",
+        "Fries": "Little Ngences Food",
+        "Cheezy Fries": "Little Ngences Food",
+        "Mee Sedap": "Little Ngences Food",
+        "Mee Tomyam": "Little Ngences Food",
+        "Chicken Burger": "Little Ngences Food",
+        
+        
+
+
+
+        "Ngences Latte": "Little Ngences Drink",
+        "Caramel Macchiato": "Little Ngences Drink",
+        "Vanilla Latte": "Little Ngences Drink",
+        "Caffe Latte": "Little Ngences Drink",
+        "Caffe Mocha": "Little Ngences Drink",
+        "Caffe Americano": "Little Ngences Drink",
+        "Oatmilk Latte": "Little Ngences Drink",
+        "Oatmilk Mocha": "Little Ngences Drink",
+        "Chocoa Latte": "Little Ngences Drink",
+        "Dirty Matcha Latte": "Little Ngences Drink",
+        "Matchogato": "Little Ngences Drink",
+        "Fruity Milk": "Little Ngences Drink",
+        "Fruity Sparkling": "Little Ngences Drink",
+        "Ngences Coffe": "Little Ngences Drink",
+        "Mocha": "Little Ngences Drink",
+        "Mocha Chip": "Little Ngences Drink",
+        "Chocolate Cream": "Little Ngences Drink",
+        "Chocolate Cream Chip": "Little Ngences Drink",
+        "Matcha Cream": "Little Ngences Drink",
+        "Matcha Cream Chip": "Little Ngences Drink",
+        "Vanilla Cream": "Little Ngences Drink",
+        "Brown Sugar Latte": "Little Ngences Drink",
+        "Chocolate Macchiato": "Little Ngences Drink",
+        "Dirty Taro Latte": "Little Ngences Drink",
+        "Dirty Strawberry Latte": "Little Ngences Drink",
+        "Cloudy Coffe": "Little Ngences Drink",
+        "Taro Latte": "Little Ngences Drink",
+        "Strawberry Latte": "Little Ngences Drink",
+        "Cocoa Matcha Latte": "Little Ngences Drink",
+        "Taro Matcha Latte": "Little Ngences Drink",
+        "Strawberry Matcha Latte": "Little Ngences Drink",
+        "Passion Tea": "Little Ngences Drink",
+        "Black Tea": "Little Ngences Drink",
+        "Cloudy Cocoa": "Little Ngences Drink",
+        "Cloudy Taro": "Little Ngences Drink",
+        "Cloudy Strawberry": "Little Ngences Drink",
+        "Cloudy Matcha": "Little Ngences Drink",
+        "Taro Cream": "Little Ngences Drink",
+        "Taro Cream Chip": "Little Ngences Drink",
+        "Strawberry Cream": "Little Ngences Drink",
+        "Strawberry Cream Chip": "Little Ngences Drink",
+
+
+
+        "Latte": "Little Ngences Drink",
+        "Cappuccino": "Little Ngences Drink",
+        "Mini Waffle": "Little Ngences Food",
+        "Chicken Nugget": "Little Ngences Food"
+        // Add more items as needed
+    };
+
+    const grouped = {};
+    order.cart.forEach(item => {
+        const category = categoryLookup[item.item] || "Others";
+        if (!grouped[category]) grouped[category] = [];
+        grouped[category].push(item);
+    });
+
+    const categoryOrder = ["food", "Side Dish", "Air Panas", "Air Sejuk", "Little Ngences Food", "Little Ngences Drink", "Others"];
+    let groupedItemsHTML = "";
+
+    categoryOrder.forEach(category => {
+        if (grouped[category]) {
+            groupedItemsHTML += `
+                               <div style="margin-top:10px; margin-bottom:10px;">
+                               <strong>${category.toUpperCase()}</strong>
+                               <ul style="margin-left:10px; margin-top:5px;">
+                            `;
+
+            grouped[category].forEach(item => {
+                const addOns = item.addOns?.length ? item.addOns.join(", ") : "Tiada";
+                groupedItemsHTML += `<li>${item.item} x ${item.quantity}<br>AddOn: (${addOns}) - RM${(item.price * item.quantity).toFixed(2)}</li>`;
+            });
+            groupedItemsHTML += `</ul><hr></div>`;
+
+        }
+    });
+
     orderDiv.innerHTML = `
         <button class="delete-btn" onclick="confirmDelete('${orderId}')"><i class="fas fa-trash-alt"></i> X </button>
 
@@ -228,12 +406,7 @@
 
         <strong><i class="fas fa-shopping-basket"></i> Items:</strong>
         <ul class="order-items">
-            ${order.cart.map(item => `
-                <li>
-                    ${item.item} - ${item.quantity}<br>
-                    AddOn:<br> (${item.addOns || "tiada"}) - RM${item.price * item.quantity}
-                </li>
-            `).join('')}
+            ${groupedItemsHTML}
         </ul>
 
         <div class="section"><strong><i class="fas fa-coins"></i> Total Harga:</strong> <span class="order-total">RM${order.totalPrice}</span></div>
@@ -250,6 +423,7 @@
     orderDiv.id = `order-${orderId}`;
     orderContainer.prepend(orderDiv);
 }
+
 
 
         
