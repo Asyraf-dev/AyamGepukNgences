@@ -357,28 +357,42 @@ push(ref(db, 'orders/'), orderDetails).then(() => {
         
         // ✅ Filtering based on category + visibility
         function applyFilter(selectedCategory) {
-          const menuItems = document.querySelectorAll(".menuItem");
-        
-          menuItems.forEach(item => {
-            const category = item.getAttribute("data-category")?.trim();
-            const isVisible = item.dataset.visible !== "false";
-        
-            if (!isVisible) {
-              item.style.display = "none";
-              return;
-            }
-        
-            if (selectedCategory === "all") {
-              if (category !== "Little Ngences Food" && category !== "Little Ngences Drink") {
-                item.style.display = "block";
-              } else {
-                item.style.display = "none";
-              }
-            } else {
-              item.style.display = category === selectedCategory ? "block" : "none";
-            }
-          });
-        }
+  const menuItems = document.querySelectorAll(".menuItem");
+
+  menuItems.forEach(item => {
+    const category = item.getAttribute("data-category")?.trim();
+    const isVisible = item.dataset.visible !== "false";
+
+    // Filter by selected category
+    if (selectedCategory === "all") {
+      if (category !== "Little Ngences Food" && category !== "Little Ngences Drink") {
+        item.style.display = "block";
+      } else {
+        item.style.display = "none";
+      }
+    } else {
+      item.style.display = category === selectedCategory ? "block" : "none";
+    }
+
+    // Mark unavailable items visually + update button
+    const button = item.querySelector("button");
+    if (!isVisible) {
+      item.classList.add("unavailable");
+      if (button) {
+        button.textContent = "Unavailable";
+        button.disabled = true;
+      }
+    } else {
+      item.classList.remove("unavailable");
+      if (button) {
+        button.textContent = "Add to Cart";
+        button.disabled = false;
+      }
+    }
+  });
+}
+
+
         
         // 🎯 Filter listeners
         document.addEventListener("DOMContentLoaded", function () {
@@ -505,7 +519,6 @@ function animateAddToCart(imgElement) {
     <audio id="success-sound" src="success.mp3" preload="auto"></audio>
     <div class="order-form-container">
         <h1>SELAMAT DATANG KE RESTORAN AYAM GEPUK</h1>
-        If item not display means it out of stock...
         <div class="menu-container">
             <h2><strong>-Menu-</strong><br><br><br>
 
