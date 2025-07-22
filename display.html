@@ -433,8 +433,7 @@
     document.querySelectorAll(".order").forEach(orderDiv => {
         const name = orderDiv.querySelector(".order-name")?.textContent.trim() || "";
         const table = orderDiv.querySelector(".order-table")?.textContent.trim() || "";
-        const request = orderDiv.querySelector(".order-request")?.textContent.trim() || "";
-
+        const request = orderDiv.querySelector(".order-request")?.textContent.replace(/\s+/g, " ").trim() || "";
         // ✅ Multiline items
         const items = Array.from(orderDiv.querySelectorAll(".order-items li"))
             .map(li => li.innerText.split("\n")[0].trim())
@@ -452,7 +451,7 @@
 
     let csvContent = "data:text/csv;charset=utf-8,Date,Time,Name,Table,Special Request,Items,Total Price,Status\n";
     orders.forEach(order => {
-        csvContent += `${order.date},${order.time},${order.name},${order.table},${order.request},"${order.items.replace(/"/g, '""')}",${order.totalPrice},${order.status}\n`;
+        csvContent += `${order.date},${order.time},${order.name},${order.table},"${order.request.replace(/\s+/g, ' ').replace(/"/g, '""')}","${order.items.replace(/"/g, '""')}",${order.totalPrice},${order.status}\n`;
     });
 
     const encodedUri = encodeURI(csvContent);
