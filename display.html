@@ -851,7 +851,7 @@ Powered by electricaltechnologymy
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.85); /* Solid when showing */
     color: #fff;
     padding: 10px 15px;
     border-radius: 12px;
@@ -860,6 +860,7 @@ Powered by electricaltechnologymy
     z-index: 9999;
     min-width: 240px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transition: background 0.3s ease; /* Smooth fade */
 ">
     <!-- Header row with button -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -890,11 +891,12 @@ Powered by electricaltechnologymy
 <script type="module">
 import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-// ✅ Reference to Firebase
+// ✅ Firebase reference
 const dbs = getDatabase();
 const statsStateRef = ref(dbs, "settings/liveStatsVisible");
 
 // Elements
+const liveStats = document.getElementById("live-stats");
 const toggleBtn = document.getElementById("toggle-stats");
 const statsContent = document.getElementById("stats-content");
 
@@ -904,6 +906,9 @@ get(statsStateRef).then(snapshot => {
         const isVisible = snapshot.val();
         statsContent.style.display = isVisible ? "block" : "none";
         toggleBtn.textContent = isVisible ? "Hide" : "Show";
+
+        // Background based on state
+        liveStats.style.background = isVisible ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.4)";
     }
 });
 
@@ -916,11 +921,14 @@ toggleBtn.addEventListener("click", () => {
     statsContent.style.display = newState ? "block" : "none";
     toggleBtn.textContent = newState ? "Hide" : "Show";
 
+    // Background change
+    liveStats.style.background = newState ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.4)";
+
     // ✅ Save to Firebase
     set(statsStateRef, newState);
 });
-
 </script>
+
 
 
     <div class="container">
