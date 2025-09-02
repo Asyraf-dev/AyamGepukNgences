@@ -446,8 +446,9 @@
         const request = orderDiv.querySelector(".order-request")?.textContent.replace(/\s+/g, " ").trim() || "";
         // ✅ Multiline items
         const items = Array.from(orderDiv.querySelectorAll(".order-items li"))
-            .map(li => li.innerText.split("\n")[0].trim())
-            .join("\n");  // new line for each item
+        .map(li => li.innerText.trim())
+        .join("\n");
+
 
         const totalPrice = orderDiv.querySelector(".order-total")?.textContent.trim() || "";
         const rawTime = orderDiv.querySelector(".order-time")?.textContent.trim() || "";
@@ -606,6 +607,28 @@ window.updateStatus = function(orderId, status) {
             });
         }, 100000); // 1 minute
     }
+    function resetQueueNumbersAtMidnight() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    // Kalau tepat pukul 00:00
+    if (hours === 0 && minutes === 0) {
+        onValue(ordersRef, snapshot => {
+            snapshot.forEach(childSnapshot => {
+                const orderId = childSnapshot.key;
+                // Update queueNumber jadi null
+                update(ref(db, "orders/" + orderId), {
+                    queueNumber: null
+                });
+            });
+        }, { onlyOnce: true });
+    }
+}
+
+// Check setiap 1 minit
+setInterval(resetQueueNumbersAtMidnight, 60000);
+
 };
 function updateDashboard() {
   onValue(ordersRef, snapshot => {
@@ -828,27 +851,77 @@ Powered by electricaltechnologymy
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0,0,0,0.85);
     color: #fff;
     padding: 10px 15px;
     border-radius: 12px;
     font-size: 13px;
     line-height: 1.4;
     z-index: 9999;
-    min-width: 220px;
+    min-width: 240px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 ">
-    <div id="online-status">Status: ...</div>
-    <div id="speed">Speed: ...</div>
-    <div id="fps">FPS: ...</div>
-    <div id="preparing-count">Preparing Orders: ...</div>
-    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin: 8px 0;">
-    <div id="total-orders-today">Total Orders Today: 0</div>
-    <div id="active-orders-count">Active Orders: 0</div>
-    <div id="top-item">Top Item: -</div>
+    <!-- Header row with button -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <strong>📊 Live Stats</strong>
+        <button id="toggle-stats" style="
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        ">Hide</button>
+    </div>
 
-    
-
+    <div id="stats-content">
+        <div id="online-status">Status: ...</div>
+        <div id="speed">Speed: ...</div>
+        <div id="fps">FPS: ...</div>
+        <div id="preparing-count">Preparing Orders: ...</div>
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin: 8px 0;">
+        <div id="total-orders-today">Total Orders Today: 0</div>
+        <div id="active-orders-count">Active Orders: 0</div>
+        <div id="top-item">Top Item: -</div>
+    </div>
 </div>
+
+<script type="module">
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+// ✅ Reference to Firebase
+const dbs = getDatabase();
+const statsStateRef = ref(dbs, "settings/liveStatsVisible");
+
+// Elements
+const toggleBtn = document.getElementById("toggle-stats");
+const statsContent = document.getElementById("stats-content");
+
+// ✅ Load initial state from Firebase
+get(statsStateRef).then(snapshot => {
+    if (snapshot.exists()) {
+        const isVisible = snapshot.val();
+        statsContent.style.display = isVisible ? "block" : "none";
+        toggleBtn.textContent = isVisible ? "Hide" : "Show";
+    }
+});
+
+// ✅ Button click event
+toggleBtn.addEventListener("click", () => {
+    const isHidden = statsContent.style.display === "none";
+    const newState = isHidden ? true : false;
+
+    // Update UI
+    statsContent.style.display = newState ? "block" : "none";
+    toggleBtn.textContent = newState ? "Hide" : "Show";
+
+    // ✅ Save to Firebase
+    set(statsStateRef, newState);
+});
+
+</script>
+
 
     <div class="container">
   <h2>Received Orders</h2>
