@@ -144,7 +144,7 @@
         button {
             margin-top: 8px;
             margin-right: 5px;
-            background-color: #2196f3;
+            background-color: #f32121;
             color: white;
             border: none;
             padding: 8px 14px;
@@ -191,6 +191,16 @@
         .danger-btn:hover {
             background-color: #d32f2f;
         }
+
+         #daily-quote {
+      white-space: pre-wrap; /* supaya text panjang auto wrap */
+      max-width: 500px;     /* boleh adjust ikut design */
+      font-size: 12px;
+      font-style: italic;
+      margin: 20px;
+    }
+   
+
     </style>
     
     <script type="module">
@@ -597,6 +607,53 @@ window.updateStatus = function(orderId, status) {
         }, 100000); // 1 minute
     }
 };
+function updateDashboard() {
+  onValue(ordersRef, snapshot => {
+    let totalOrders = 0;
+    let activeOrders = 0;
+    let itemCount = {};
+
+    snapshot.forEach(childSnapshot => {
+      const order = childSnapshot.val();
+      const orderDate = new Date(order.timestamp).toISOString().split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+
+      // ✅ Count total orders for today
+      if (orderDate === today) {
+        totalOrders++;
+
+        // ✅ Loop through the cart items
+        if (order.cart) {
+          order.cart.forEach(cartItem => {
+            const itemName = cartItem.item;
+            const qty = cartItem.quantity || 1;
+            itemCount[itemName] = (itemCount[itemName] || 0) + qty;
+          });
+        }
+      }
+
+      // ✅ Count active orders (not ready/cancelled)
+      if (order.status !== "ready" && order.status !== "cancelled") {
+        activeOrders++;
+      }
+    });
+
+    // ✅ Find top selling item
+    let topItem = "-";
+    if (Object.keys(itemCount).length > 0) {
+      topItem = Object.keys(itemCount).reduce((a, b) => itemCount[a] > itemCount[b] ? a : b);
+    }
+
+    // ✅ Update Live Stats panel
+    document.getElementById("total-orders-today").textContent = `Total Orders Today: ${totalOrders}`;
+    document.getElementById("active-orders-count").textContent = `Active Orders: ${activeOrders}`;
+    document.getElementById("top-item").textContent = `Top Item: ${topItem}🔝🔥`;
+  });
+}
+
+updateDashboard();
+
+
 
 
     </script>
@@ -761,10 +818,12 @@ Powered by electricaltechnologymy
 
     // ✅ Make it global
     window.copyOrderToClipboard = copyOrderToClipboard;
+    
 </script>
 </head>
 <body>
-    <!-- Live Stats Display -->
+
+<!-- Live Stats Display -->
 <div id="live-stats" style="
     position: fixed;
     bottom: 20px;
@@ -776,18 +835,40 @@ Powered by electricaltechnologymy
     font-size: 13px;
     line-height: 1.4;
     z-index: 9999;
+    min-width: 220px;
 ">
     <div id="online-status">Status: ...</div>
     <div id="speed">Speed: ...</div>
     <div id="fps">FPS: ...</div>
     <div id="preparing-count">Preparing Orders: ...</div>
-</div>
-    <div class="container">
-        <h2>Received Orders</h2>
-        <div class="active-orders" id="active-orders">Active Orders (0)</div>
-        <div class="orders-container" id="orders"></div>
-    </div>
+    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin: 8px 0;">
+    <div id="total-orders-today">Total Orders Today: 0</div>
+    <div id="active-orders-count">Active Orders: 0</div>
+    <div id="top-item">Top Item: -</div>
+
     
+
+</div>
+
+    <div class="container">
+  <h2>Received Orders</h2>
+  <div class="active-orders" id="active-orders">Active Orders (0)</div>
+  <!-- Daily Quote Section -->
+  <div id="daily-quote"
+       style="margin-top:20px;
+              padding:12px;
+              background:#f9f9f9;
+              border-left:4px solid #4CAF50;
+              border-radius:6px;
+              font-style:italic;">
+  </div>
+  <div class="orders-container" id="orders"></div>
+
+  
+</div>
+
+
+
 </body>
 <script>
     // ✅ Internet Speed Test
@@ -874,5 +955,83 @@ document.addEventListener("DOMContentLoaded", () => {
             countPreparingOrders();
         }, 5000);
     });
+
+    function setDailyQuote() {
+  const quotes = [
+    "Berniaga makanan dengan niat kerana Allah, maka setiap rezeki menjadi ibadah.",
+    "Hidangan yang halal membawa keberkatan dalam hidup dan perniagaan.",
+    "Jangan hanya jual makanan untuk kenyang, tetapi juga untuk menyuburkan jiwa dengan halal.",
+    "Keikhlasan dalam berniaga membuka pintu rezeki yang luas.",
+    "Makanan halal dan bersih adalah dakwah senyap seorang peniaga.",
+    "Barakah datang apabila niat perniagaan bukan hanya mencari untung, tetapi juga memberi manfaat.",
+    "Perniagaan makanan yang diberkati adalah yang menjaga halal dan toyyib.",
+    "Niat yang baik melahirkan rezeki yang baik.",
+    "Hidangkan makanan dengan doa, insyaAllah jadi penawar kepada pelanggan.",
+    "Dalam setiap suapan pelanggan, ada pahala buat peniaga yang amanah.",
+    "Jual makanan dengan jujur, Allah akan tambahkan rezeki.",
+    "Jangan kurangkan sukatan, kerana keberkatan akan berkurang.",
+    "Amanah dalam perniagaan lebih manis daripada keuntungan yang banyak.",
+    "Senyum peniaga adalah sebahagian daripada layanan yang ikhlas.",
+    "Allah mencintai peniaga yang jujur dan amanah.",
+    "Rezeki yang halal datang daripada perniagaan yang bersih daripada penipuan.",
+    "Jujur dalam perniagaan makanan lebih bernilai daripada promosi besar.",
+    "Menipu pelanggan dengan harga atau kualiti, sama dengan menggadai keberkatan.",
+    "Kejujuran dalam berniaga adalah iklan terbaik.",
+    "Rezeki yang sedikit tetapi berkat lebih bermakna daripada keuntungan yang banyak tetapi haram.",
+    "Pelanggan bukan sekadar pembeli, tetapi amanah yang Allah titipkan.",
+    "Setiap pelanggan yang kenyang adalah doa berjalan untuk perniagaan kita.",
+    "Layani pelanggan dengan adab, kerana akhlak lebih mengenyangkan hati.",
+    "Senyum kepada pelanggan adalah sedekah yang tidak pernah rugi.",
+    "Rezeki pelanggan datang bersama rezeki peniaga.",
+    "Jangan hanya jual makanan, tapi jual juga pengalaman yang baik.",
+    "Pelanggan yang dihormati akan kembali dengan rezeki yang berlipat kali.",
+    "Hidangkan makanan seperti anda hidangkan kepada keluarga sendiri.",
+    "Beri lebih daripada yang dijanjikan, nescaya pelanggan akan setia.",
+    "Doa pelanggan yang puas adalah promosi terbaik.",
+    "Rezeki bukan hanya pada wang, tetapi pada keberkatan masa dan kesihatan.",
+    "Berniaga dengan syukur menjadikan sedikit itu cukup.",
+    "Rezeki setiap orang sudah ditetapkan, berniagalah dengan tenang dan tawakkal.",
+    "Keuntungan yang halal adalah rezeki yang diberkati.",
+    "Jangan tamak mengejar untung, kerana rezeki Allah luas tanpa batas.",
+    "Syukur pada rezeki kecil, Allah akan gandakan dengan yang besar.",
+    "Makanan yang halal membawa rezeki yang suci.",
+    "Jangan iri pada perniagaan orang lain, kerana setiap rezeki ada bahagiannya.",
+    "Rezeki yang halal ibarat baja yang menyuburkan kehidupan.",
+    "Perniagaan yang diberkati ialah perniagaan yang disyukuri.",
+    "Berniaga makanan adalah seni menyebarkan kebaikan melalui rezeki halal.",
+    "Setiap hidangan adalah peluang untuk beramal.",
+    "Keletihan berniaga akan hilang, tetapi keberkatannya kekal.",
+    "Peniaga yang sabar dalam ujian akan Allah hadiahkan rezeki berganda.",
+    "Berniaga makanan bukan sekadar mencari untung, tetapi membina silaturrahim.",
+    "Dalam setiap masakan ada doa seorang peniaga kepada pelanggannya.",
+    "Perniagaan makanan yang bersih adalah sebahagian daripada iman.",
+    "Bern iaga adalah sunnah, berniaga makanan halal adalah ibadah.",
+    "Setiap sen yang diperoleh daripada makanan halal akan jadi cahaya dalam hidup.",
+    "Makanan yang baik menjadi sedekah kepada tubuh manusia.",
+    "Rasulullah ﷺ sendiri adalah peniaga yang jujur, ikutilah jejak baginda.",
+    "Perniagaan yang jujur akan bersama para nabi di akhirat.",
+    "Islam mengajar peniaga untuk berlaku adil dan ikhlas.",
+    "Jangan jual makanan haram, kerana ia membawa kepada murka Allah.",
+    "Allah mencintai hamba yang mencari rezeki halal dengan usaha sendiri.",
+    "Berniaga makanan adalah jihad mencari rezeki yang suci.",
+    "Peniaga yang amanah lebih mulia daripada ahli ibadah yang menipu.",
+    "Dalam perniagaan makanan, halal itu wajib, sedap itu bonus.",
+    "Setiap makanan halal yang terjual adalah saksi amal kita.",
+    "Peniaga yang baik menjadikan perniagaan sebagai jalan menuju syurga."
+  ];
+
+  // Pick quote based on day of the year
+  const today = new Date();
+  const dayOfYear = Math.floor(
+    (today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)
+  );
+
+  const quote = quotes[dayOfYear % quotes.length];
+  document.getElementById("daily-quote").textContent = `"${quote}"`;
+}
+
+// Run once when page loads
+setDailyQuote();
+
 </script>
 </html>
