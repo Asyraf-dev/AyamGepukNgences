@@ -36,6 +36,24 @@
         border-radius: 6px;
         border: 1px solid #ccc;
        }
+
+       /* Quote box styling */
+       #daily-quote {
+       background:#f0fff4;
+       border-left:5px solid #28a745;
+       padding:12px;
+       margin:15px 0;
+       border-radius:8px;
+       font-style:italic;
+       font-size:15px;
+       color:#333;
+      }
+      #quote-label {
+     font-weight:bold;
+     display:block;
+     margin-bottom:5px;
+     color:#28a745;
+     }
     </style>
 
     <script type="module">
@@ -519,6 +537,11 @@ function animateAddToCart(imgElement) {
     <audio id="success-sound" src="success.mp3" preload="auto"></audio>
     <div class="order-form-container">
         <h1>SELAMAT DATANG KE RESTORAN AYAM GEPUK</h1>
+        <!-- ✅ Daily Quote Section -->
+       <div id="daily-quote">
+       <span id="quote-label">Quotes Hari Ini:</span>
+       <span id="quote-text"></span>
+       </div>
         <div class="menu-container">
             <h2><strong>-Menu-</strong><br><br><br>
 
@@ -2817,6 +2840,59 @@ function animateAddToCart(imgElement) {
         </div>
     </div>
     <div id="notification" class="notification"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const quotes = [
+    "Hidangan ini disajikan dengan penuh kasih sayang.",
+    "Setiap suapan adalah doa kecil agar anda sentiasa bahagia.",
+    "Makanan enak, hati tenang.",
+    "Kami hidang dengan ikhlas, anda nikmati dengan senyuman.",
+    "Rezeki yang halal membawa keberkatan.",
+    "Setiap hidangan adalah tanda penghargaan untuk anda.",
+    "Nikmatilah momen ini bersama yang tersayang.",
+    "Kami percaya makanan bukan sekadar isi perut, tapi isi hati.",
+    "Selamat menjamu selera, semoga hari anda seindah hidangan ini.",
+    "Anda bukan sekadar pelanggan, anda adalah keluarga kami.",
+    "Setiap kunjungan anda adalah kebahagiaan bagi kami.",
+    "Semoga hidangan ini mengukir senyuman di wajah anda.",
+    "Kami hidang dengan cinta, anda rasa dengan jiwa.",
+    "Hidangan kecil, makna besar.",
+    "Setiap pelanggan istimewa adalah anugerah buat kami.",
+    "Nikmatilah, kerana setiap rasa datang dari hati kami.",
+    "Doa kami, setiap hidangan ini membawa ketenangan jiwa anda.",
+    "Bersyukur kerana dapat berkongsi rezeki ini dengan anda.",
+    "Hidangan penuh rasa, untuk pelanggan penuh makna.",
+    "Makanan ini disediakan dengan ikhlas, untuk anda yang istimewa.",
+    "Semoga setiap suapan membawa ketenangan dalam hati.",
+    "Kami tidak hanya menjamu selera, kami berkongsi bahagia.",
+    "Selamat menikmati hidangan, semoga ia jadi kenangan indah.",
+    "Makanan yang baik menyatukan hati yang jauh.",
+    "Pelanggan seperti anda membuat hari kami lebih indah.",
+    "Semoga setiap rasa ini memberi semangat baru untuk anda.",
+    "Anda datang sebagai pelanggan, pulang sebagai sahabat.",
+    "Hidangan ini lahir dari doa dan kerja ikhlas.",
+    "Semoga hidangan ini menjadi penyejuk hati dan penguat jiwa.",
+    "Kehadiran anda di sini adalah rezeki besar buat kami."
+  ];
+
+  const today = new Date();
+  const dayOfYear = Math.floor(
+    (today - new Date(today.getFullYear(), 0, 0)) / 86400000
+  );
+
+  // pilih quote ikut hari
+  let quote = quotes[dayOfYear % quotes.length];
+
+  // tambah ayat tetap di hujung
+  quote += " -Ikhlas dari Kami Restoran Ayam Gepuk Ngences❤️";
+
+  document.getElementById("quote-text").innerText = quote;
+});
+
+
+</script>
+
 
     <footer>
         <a href="customer.html" class="ribbon-button">Monitoring Order[LIVE]</a>
