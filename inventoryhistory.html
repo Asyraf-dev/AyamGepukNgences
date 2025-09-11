@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checksheet History</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7fc;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      font-size: 2.5em;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 100%;
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+    }
+
+    .date-label {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #28a745;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .history-title {
+      font-size: 1.6em;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      padding: 20px;
+      margin-top: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+      background-color: #28a745;
+      color: white;
+      padding: 15px;
+      font-size: 1.4em;
+      font-weight: bold;
+      border-radius: 6px;
+    }
+
+    .category {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+      background-color: #e9f5f4;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .item-list {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+
+    .item-list div {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 1.1em;
+      color: #555;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .item-list div:last-child {
+      border-bottom: none;
+    }
+
+    .buttons {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .buttons button {
+      padding: 12px 25px;
+      font-size: 1.1em;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 10px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .buttons button:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+    }
+
+    .buttons button:focus {
+      outline: none;
+    }
+
+    /* Mobile responsive design */
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+
+      .container {
+        width: 95%;
+      }
+
+      .history-title {
+        font-size: 1.4em;
+      }
+
+      .buttons button {
+        font-size: 1em;
+        padding: 8px 15px;
+      }
+    }
+
+    /* Smaller mobile screens */
+    @media screen and (max-width: 480px) {
+      h1 {
+        font-size: 1.6em;
+      }
+
+      .buttons button {
+        font-size: 0.9em;
+        padding: 6px 12px;
+      }
+    }
+
+    .today-checklist-label {
+  font-size: 1em;  /* Smaller font size */
+  font-weight: bold;
+  color: white;
+  background-color: #ff4e00;  /* Bright orange for alert effect */
+  padding: 5px 10px;  /* Smaller padding */
+  margin-left: 10px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);  /* Reduced glow effect */
+  animation: minimalBounce 1.5s ease-in-out infinite;  /* Slower animation */
+}
+
+@keyframes minimalBounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);  /* Smaller bounce */
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.card-header {
+  background-color: #28a745;
+  color: white;
+  padding: 15px;
+  font-size: 1.4em;
+  font-weight: bold;
+  border-radius: 6px;
+  position: relative;  /* Positioning for absolute positioning of label */
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 20px;
+  margin-top: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+    
+  </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+</head>
+<body>
+  <div class="container">
+    <h1>Checksheet History</h1>
+
+    <!-- Date Label Section -->
+    <div id="dateLabel" class="date-label"></div>
+
+    <!-- History List Section -->
+    <div class="history-title">
+      <p>History of Items Selected:</p>
+    </div>
+
+    <div class="buttons">
+      <button onclick="window.location.href='inventory.html'">Back to Inventory</button>
+      <button onclick="saveToCSV()">Save to CSV</button>
+    </div>
+  
+
+    <!-- Dynamic Cards for each date will be added here -->
+    <div id="historyCards"></div>
+</div>
+    
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC8piEU-44jNKKaiWZlp2mEmDFwbO6FsrY",
+      authDomain: "inventory-change-1f2c9.firebaseapp.com",
+      databaseURL: "https://inventory-change-1f2c9-default-rtdb.firebaseio.com",
+      projectId: "inventory-change-1f2c9",
+      storageBucket: "inventory-change-1f2c9.firebasestorage.app",
+      messagingSenderId: "657658084944",
+      appId: "1:657658084944:web:77898bcda22fcddf275b55",
+      measurementId: "G-1BRQB0GFJX"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Display today's date at the top
+    function displayDate() {
+      const today = new Date().toLocaleDateString(); // Get current date (e.g., 9/11/2025)
+      document.getElementById('dateLabel').textContent = `Today's Date: ${today}`;
+    }
+
+    // Function to fetch historical checksheets from Firebase
+// Function to fetch historical checksheets from Firebase
+function fetchHistory() {
+  const historyCards = document.getElementById('historyCards');
+  const todayDate = new Date().toISOString().split('T')[0]; // Get today's date (YYYY-MM-DD)
+
+  // Fetch checksheets stored by date
+  db.ref('checklists').once('value', function(snapshot) {
+    const data = snapshot.val();
+    if (data) {
+      // Sort dates in descending order to show the newest date first
+      const sortedDates = Object.keys(data).sort((a, b) => new Date(b) - new Date(a));
+
+      sortedDates.forEach(date => {
+        // For each entry on the same date, create a unique card using a timestamp
+        const timestamp = new Date().getTime(); // Unique timestamp for each submission
+        const cardId = `${date}-${timestamp}`;
+
+        // Create a card for each date (even for multiple entries on the same day)
+        const card = document.createElement("div");
+        card.className = "card";
+        card.id = cardId; // Assign unique ID to the card
+
+        // Create a card header with today's label if it's the current date
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header";
+        cardHeader.innerHTML = date;
+
+        // If the card is for today, add the "Today Checklist" label with alert style
+        if (date === todayDate) {
+          const todayLabel = document.createElement("span");
+          todayLabel.textContent = "Today Checklist";
+          todayLabel.className = 'today-checklist-label'; // Add class for styling
+
+          cardHeader.appendChild(todayLabel);
+        }
+
+        // Create the category sections
+        const barangPasarList = document.createElement("div");
+        barangPasarList.className = "category";
+        barangPasarList.innerHTML = "Barang Pasar";
+        barangPasarList.id = "barangPasar";
+
+        const barangRuncitList = document.createElement("div");
+        barangRuncitList.className = "category";
+        barangRuncitList.innerHTML = "Barang Runcit";
+        barangRuncitList.id = "barangRuncit";
+
+        const barangKeringList = document.createElement("div");
+        barangKeringList.className = "category";
+        barangKeringList.innerHTML = "Barang Kering";
+        barangKeringList.id = "barangKering";
+
+        // Append the header and lists to the card
+        card.appendChild(cardHeader);
+        card.appendChild(barangPasarList);
+        card.appendChild(barangRuncitList);
+        card.appendChild(barangKeringList);
+
+        // Segregate items into categories based on their category field
+        let barangPasarItems = [];
+        let barangRuncitItems = [];
+        let barangKeringItems = [];
+
+        data[date].items.forEach(item => {
+          const itemText = `${item.item}`;
+          const quantityText = `${item.quantity} ${item.unit}`;
+
+          const category = item.category.trim().toLowerCase();
+
+          if (category === 'barang pasaran') {
+            barangPasarItems.push(`${itemText} - ${quantityText}`);
+          } else if (category === 'barang runcit') {
+            barangRuncitItems.push(`${itemText} - ${quantityText}`);
+          } else if (category === 'barang kering') {
+            barangKeringItems.push(`${itemText} - ${quantityText}`);
+          }
+        });
+
+        // Append items to their respective categories
+        appendItemsToCategory(barangPasarList, barangPasarItems);
+        appendItemsToCategory(barangRuncitList, barangRuncitItems);
+        appendItemsToCategory(barangKeringList, barangKeringItems);
+
+        // Append the card to the history container
+        historyCards.appendChild(card);
+      });
+    } else {
+      // If no data, show message
+      const noDataMessage = document.createElement("div");
+      noDataMessage.textContent = "No historical data available.";
+      historyCards.appendChild(noDataMessage);
+    }
+  });
+}
+
+// Helper function to append items to a category
+function appendItemsToCategory(categoryElement, items) {
+  const itemList = document.createElement("div");
+  itemList.className = "item-list"; // Create the item list container
+  items.forEach(item => {
+    const itemDiv = document.createElement("div");
+    itemDiv.textContent = item; // Append the item to the item list
+    itemList.appendChild(itemDiv);
+  });
+  categoryElement.appendChild(itemList); // Add the item list to the category
+}
+
+
+    // Load the date and history when the page is loaded
+    window.onload = function() {
+      displayDate();
+      fetchHistory();
+    };
+
+    function saveToCSV() {
+  const historyCards = document.getElementById('historyCards');
+
+  // Check if historyCards is not null and has children
+  if (!historyCards || !historyCards.children.length) {
+    alert('No history data available to export.');
+    return; // Exit if no data is available
+  }
+
+  const csvData = [];
+  const historyCardsChildren = historyCards.children;
+
+  // Add the header row to CSV
+  csvData.push("Date,Barang Pasar Item,Barang Pasar Quantity,Barang Runcit Item,Barang Runcit Quantity,Barang Kering Item,Barang Kering Quantity");
+
+  // Fetch each item and quantity
+  Array.from(historyCardsChildren).forEach(card => {
+    const date = card.querySelector(".card-header").textContent;
+
+    // Get the item lists (Barang Pasar, Barang Runcit, Barang Kering)
+    const barangPasarItems = card.querySelector("#barangPasar .item-list") ? card.querySelector("#barangPasar .item-list").children : [];
+    const barangRuncitItems = card.querySelector("#barangRuncit .item-list") ? card.querySelector("#barangRuncit .item-list").children : [];
+    const barangKeringItems = card.querySelector("#barangKering .item-list") ? card.querySelector("#barangKering .item-list").children : [];
+
+    // Ensure all items are iterated and added to the CSV data
+    const maxLength = Math.max(barangPasarItems.length, barangRuncitItems.length, barangKeringItems.length);
+    for (let i = 0; i < maxLength; i++) {
+      // Access item and quantity for each category, excluding the unit
+      const barangPasarItem = barangPasarItems[i] ? barangPasarItems[i].textContent.split(" - ")[0] : "";
+      const barangPasarQuantity = barangPasarItems[i] ? barangPasarItems[i].textContent.split(" - ")[1].replace(/[^\d]/g, "") : ""; // Remove non-digit characters
+
+      const barangRuncitItem = barangRuncitItems[i] ? barangRuncitItems[i].textContent.split(" - ")[0] : "";
+      const barangRuncitQuantity = barangRuncitItems[i] ? barangRuncitItems[i].textContent.split(" - ")[1].replace(/[^\d]/g, "") : ""; // Remove non-digit characters
+
+      const barangKeringItem = barangKeringItems[i] ? barangKeringItems[i].textContent.split(" - ")[0] : "";
+      const barangKeringQuantity = barangKeringItems[i] ? barangKeringItems[i].textContent.split(" - ")[1].replace(/[^\d]/g, "") : ""; // Remove non-digit characters
+
+      // Ensure we don't push empty rows
+      if (barangPasarItem || barangRuncitItem || barangKeringItem) {
+        csvData.push(`${date},${barangPasarItem},${barangPasarQuantity},${barangRuncitItem},${barangRuncitQuantity},${barangKeringItem},${barangKeringQuantity}`);
+      }
+    }
+  });
+
+  // Convert the array to a string and create a CSV Blob
+  const csvString = csvData.join("\n");
+  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+
+  // Create a link and trigger the download
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", "checksheet_history.csv");
+  link.click();
+}
+
+
+  </script>
+</body>
+</html>
