@@ -64,7 +64,9 @@ h1 {
 .buttons {
   margin-top: 25px;
   text-align: center;
+  padding: 20px 0;
 }
+
 .buttons button {
   padding: 12px 22px;
   font-size: 1rem;
@@ -77,25 +79,33 @@ h1 {
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
 .buttons button:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
-.buttons .copy-button { background: linear-gradient(135deg, #007bff, #0056b3); }
-.buttons .print-button { background: linear-gradient(135deg, #ffc107, #e0a800); color: #333; }
-.buttons .view-history-button { background: linear-gradient(135deg, #6c757d, #5a6268); }
 
-/* Sticky buttons on mobile */
+.buttons .copy-button { 
+  background: linear-gradient(135deg, #007bff, #0056b3); 
+}
+.buttons .print-button { 
+  background: linear-gradient(135deg, #ffc107, #e0a800); 
+  color: #333; 
+}
+.buttons .view-history-button { 
+  background: linear-gradient(135deg, #6c757d, #5a6268); 
+}
+
+/* Remove sticky behavior on mobile */
 @media (max-width: 768px) {
   .buttons {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+    position: relative; /* not fixed */
+    bottom: auto;
+    left: auto;
     width: 100%;
-    background: #fff;
-    padding: 10px;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-    z-index: 999;
+    background: transparent;
+    padding: 20px 0;
+    box-shadow: none;
   }
   .buttons button {
     margin: 5px;
@@ -103,6 +113,7 @@ h1 {
     padding: 10px 14px;
   }
 }
+
 
 /* ===== Scroll Button ===== */
 .scroll-btn {
@@ -267,31 +278,80 @@ h1 {
 }
 .remove-btn:hover { transform: scale(1.2); }
 
-/* ===== Responsive ===== */
-@media (max-width: 768px) {
-  .container { padding: 20px; }
-  .filter-container { justify-content: center; flex-wrap: wrap; }
-  .inventory-list th, .inventory-list td { padding: 10px; }
+/* ===== Responsive Scaling ===== */
+
+/* Tablets */
+@media (max-width: 992px) {
+  body {
+    font-size: 0.95rem;
+  }
+  h1 {
+    font-size: 1.8em;
+  }
+  .container {
+    padding: 20px;
+  }
+  .inventory-list th, 
+  .inventory-list td {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+  .checksheet h2 {
+    font-size: 1.3em;
+  }
   .checksheet ul li {
-    font-size: 1em;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .checksheet li input,
-  .checksheet li select {
-    margin-top: 8px;
-    margin-left: 0;
-    width: 100%;
+    font-size: 0.95em;
   }
 }
+
+/* Phones */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.9rem;
+  }
+  h1 {
+    font-size: 1.6em;
+  }
+  .container {
+    padding: 15px;
+  }
+  .inventory-list th, 
+  .inventory-list td {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+  .checksheet h2 {
+    font-size: 1.2em;
+  }
+  .checksheet ul li {
+    font-size: 0.9em;
+  }
+}
+
+/* Small Phones */
 @media (max-width: 480px) {
-  .scroll-btn {
-    font-size: 18px;
-    padding: 14px;
-    bottom: 20px;
-    right: 20px;
+  body {
+    font-size: 0.85rem;
+  }
+  h1 {
+    font-size: 1.3em;
+  }
+  .container {
+    padding: 10px;
+  }
+  .inventory-list th, 
+  .inventory-list td {
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+  .checksheet h2 {
+    font-size: 1.1em;
+  }
+  .checksheet ul li {
+    font-size: 0.85em;
   }
 }
+
 </style>
 
 
