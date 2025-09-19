@@ -351,6 +351,91 @@ h1 {
     font-size: 0.85em;
   }
 }
+/* ===== General Styles ===== */
+#checksheetList {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+#checksheetList h3 {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  display: inline-block;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* ===== Category Group Headers ===== */
+#barang_pasaran-section h3 {
+  background: #4CAF50; /* Green */
+}
+
+#barang_runcit-section h3 {
+  background: #2196F3; /* Blue */
+}
+
+#barang_kering-section h3 {
+  background: #FF9800; /* Orange */
+}
+
+/* ===== Item List ===== */
+#checksheetList ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+#checksheetList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9f9f9;
+  padding: 6px 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+  border-left: 4px solid #ccc;
+  transition: 0.2s ease;
+}
+
+#checksheetList li:hover {
+  background: #f1f1f1;
+  transform: translateX(4px);
+}
+
+/* Quantity input */
+#checksheetList li input[type="number"] {
+  width: 60px;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+/* Unit dropdown */
+#checksheetList li select {
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+/* Remove button */
+#checksheetList li .remove-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#checksheetList li .remove-btn:hover {
+  background: #c62828;
+}
+
 
 </style>
 
@@ -371,7 +456,7 @@ h1 {
         <option value="all">All Items</option>
         <option value="barang_pasaran">Barang Pasar 🥬</option>
         <option value="barang_runcit">Barang Runcit 🛒</option>
-        <option value="barang_kering">Barang Kering 🍗</option>
+        <option value="barang_kering">Barang Kering 📦</option>
       </select>
     </div>
 
@@ -578,7 +663,7 @@ const cssClassMap = {
       });
     }
 
-    // Function to add selected item to checksheet
+// Function to add selected item to checksheet (3 groups only)
 function addToChecksheet(itemName) {
   const checksheetList = document.getElementById("checksheetList");
 
@@ -587,33 +672,38 @@ function addToChecksheet(itemName) {
     return;
   }
 
-  // Find sub-category
-  let subCategory = "Others";
-  for (const [cat, items] of Object.entries(categoryMap)) {
-    if (items.includes(itemName)) {
-      subCategory = cat;
-      break;
-    }
+  // Decide which group this item belongs to
+  let group = "barang_kering"; // default
+  if (inventoryData.barang_pasaran.some(i => i.name === itemName)) {
+    group = "barang_pasaran";
+  } else if (inventoryData.barang_runcit.some(i => i.name === itemName)) {
+    group = "barang_runcit";
   }
 
-  // Check if subcategory section exists
-  let categorySection = document.getElementById(`${subCategory}-section`);
-  if (!categorySection) {
-    categorySection = document.createElement("div");
-    categorySection.id = `${subCategory}-section`;
-    categorySection.innerHTML = `<h3>${emojiMap[subCategory] || ""} ${subCategory}</h3><ul></ul>`;
-    checksheetList.appendChild(categorySection);
+  // Group headers with emoji
+  const groupMap = {
+    barang_pasaran: { title: "Barang Pasar", emoji: "🥬" },
+    barang_runcit: { title: "Barang Runcit", emoji: "🛒" },
+    barang_kering: { title: "Barang Kering", emoji: "📦" }
+  };
+
+  // Check if group section exists
+  let groupSection = document.getElementById(`${group}-section`);
+  if (!groupSection) {
+    groupSection = document.createElement("div");
+    groupSection.id = `${group}-section`;
+    groupSection.innerHTML = `<h3>${groupMap[group].emoji} ${groupMap[group].title}</h3><ul></ul>`;
+    checksheetList.appendChild(groupSection);
   }
 
-  const ul = categorySection.querySelector("ul");
+  const ul = groupSection.querySelector("ul");
 
-  // Create li
+  // Create list item
   const li = document.createElement("li");
-  li.classList.add(cssClassMap[subCategory] || "category-default");
 
   // Item label
   const itemText = document.createElement("span");
-  itemText.textContent = `${emojiMap[subCategory] || ""} ${itemName}`;
+  itemText.textContent = itemName;
   li.appendChild(itemText);
 
   // Quantity input
