@@ -8,8 +8,8 @@
 /* ===== Global Styles ===== */
 body {
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f5f7fb;
-  color: #333;
+  background: linear-gradient(135deg, #f4f7fb, #eef2f8);
+  color: #2c2c2c;
   padding: 20px;
   margin: 0;
   line-height: 1.6;
@@ -17,72 +17,78 @@ body {
 
 h1 {
   text-align: center;
-  color: #222;
-  font-size: 2.2em;
+  color: #1d1d1d;
+  font-size: 2.4em;
   font-weight: 700;
-  margin-bottom: 25px;
-  letter-spacing: 0.5px;
+  margin-bottom: 30px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
 /* ===== Container ===== */
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 30px;
+  padding: 35px;
   background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.container:hover { transform: translateY(-2px); }
+.container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
 
 /* ===== Filter Section ===== */
 .filter-container {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 20px;
+  align-items: center;
+  margin-bottom: 25px;
   font-size: 0.95rem;
+  gap: 10px;
 }
 .filter-container label {
-  margin-right: 10px;
   font-weight: 600;
-  color: #444;
+  color: #333;
 }
 .filter-container select {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
   font-size: 0.95rem;
-  transition: border-color 0.3s ease;
+  background: #fff;
+  transition: all 0.3s ease;
 }
 .filter-container select:focus {
   border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
   outline: none;
 }
 
 /* ===== Buttons ===== */
 .buttons {
-  margin-top: 25px;
+  margin-top: 30px;
   text-align: center;
-  padding: 20px 0;
 }
 
 .buttons button {
-  padding: 12px 22px;
+  padding: 12px 24px;
   font-size: 1rem;
+  font-weight: 600;
   background: linear-gradient(135deg, #28a745, #218838);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   margin: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
 }
-
 .buttons button:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
 }
 
 .buttons .copy-button { 
@@ -96,39 +102,20 @@ h1 {
   background: linear-gradient(135deg, #6c757d, #5a6268); 
 }
 
-/* Remove sticky behavior on mobile */
-@media (max-width: 768px) {
-  .buttons {
-    position: relative; /* not fixed */
-    bottom: auto;
-    left: auto;
-    width: 100%;
-    background: transparent;
-    padding: 20px 0;
-    box-shadow: none;
-  }
-  .buttons button {
-    margin: 5px;
-    font-size: 0.9rem;
-    padding: 10px 14px;
-  }
-}
-
-
 /* ===== Scroll Button ===== */
 .scroll-btn {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 25px;
+  right: 25px;
   background: #007bff;
   color: #fff;
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   font-size: 22px;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
@@ -136,7 +123,7 @@ h1 {
 }
 .scroll-btn:hover {
   background: #0056b3;
-  transform: scale(1.1);
+  transform: scale(1.12);
 }
 .scroll-btn.show-btn {
   opacity: 1;
@@ -145,12 +132,12 @@ h1 {
 
 /* ===== Inventory Table ===== */
 .inventory-list {
-  margin: 30px 0;
+  margin: 35px 0;
   border-collapse: collapse;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.05);
 }
 .inventory-list th,
 .inventory-list td {
@@ -159,41 +146,44 @@ h1 {
   text-align: center;
 }
 .inventory-list th {
-  background: #f0f2f6;
-  font-weight: 600;
-  color: #444;
+  background: #f8f9fa;
+  font-weight: 700;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-.inventory-list tr:nth-child(even) td { background: #fafafa; }
+.inventory-list tr:nth-child(even) td { background: #fcfcfc; }
 .inventory-list tbody tr:hover {
-  background: #f1f7ff;
+  background: #eef6ff;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.25s ease;
 }
 
 /* ===== Checksheet ===== */
 .checksheet {
-  margin-top: 40px;
-  padding: 20px;
+  margin-top: 45px;
+  padding: 25px;
   background-color: #f9fafc;
-  border-radius: 10px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 }
 .checksheet h2 {
-  font-size: 1.6em;
-  margin-bottom: 15px;
-  color: #222;
+  font-size: 1.7em;
+  margin-bottom: 18px;
+  color: #1d1d1d;
   border-bottom: 2px solid #e6e6e6;
   padding-bottom: 8px;
+  font-weight: 700;
 }
 .checksheet p#timestamp {
   display: inline-block;
   background: #e9f5ff;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #007bff;
   font-weight: 600;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 .checksheet ul {
   list-style-type: none;
@@ -201,7 +191,7 @@ h1 {
   margin: 0;
 }
 .checksheet ul li {
-  padding: 12px 0;
+  padding: 14px 0;
   font-size: 1.05em;
   display: flex;
   justify-content: space-between;
@@ -210,231 +200,111 @@ h1 {
   transition: all 0.3s ease;
 }
 .checksheet li:last-child { border-bottom: none; }
-.checksheet li span { flex: 2; color: #444; }
+.checksheet li span { flex: 2; color: #444; font-weight: 500; }
 .checksheet li input[type="number"],
 .checksheet li select {
   width: 110px;
   padding: 7px;
   margin-left: 10px;
   font-size: 0.95em;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #ccc;
   outline: none;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .checksheet li input:focus,
-.checksheet li select:focus { border-color: #007bff; }
-
-/* Animation for add/remove */
-.checksheet ul li.added {
-  background: #e6f7ff;
-  animation: fadeIn 0.5s ease;
+.checksheet li select:focus { 
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
 }
-.checksheet ul li.removed {
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: all 0.3s ease;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== Category Colors ===== */
-.category-vegetables { background: #e8f7e4; }
-.category-spices { background: #fff0f0; }
-.category-staples { background: #fff8e1; }
-.category-dairy { background: #eaf4fd; }
-.category-meats { background: #fdeaea; }
-.category-seasoning { background: #f0e6ff; }
-.category-nonfood { background: #f4f4f4; }
-
-/* ===== Category Badges ===== */
-.category-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-right: 10px;
-}
-.category-vegetables .category-badge { background: #d4f3d4; color: #2e7d32; }
-.category-spices .category-badge { background: #ffe0e0; color: #c62828; }
-.category-staples .category-badge { background: #fff3cd; color: #856404; }
-.category-dairy .category-badge { background: #e0f0ff; color: #0056b3; }
-.category-meats .category-badge { background: #fde2e2; color: #b71c1c; }
-.category-seasoning .category-badge { background: #efe0ff; color: #6a1b9a; }
-.category-nonfood .category-badge { background: #e9ecef; color: #495057; }
 
 /* ===== Remove Button ===== */
 .remove-btn {
   background: none;
   border: none;
   color: #dc3545;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   cursor: pointer;
-  margin-left: 10px;
-  transition: transform 0.2s ease;
+  margin-left: 12px;
+  transition: transform 0.2s ease, color 0.3s ease;
 }
-.remove-btn:hover { transform: scale(1.2); }
-
-/* ===== Responsive Scaling ===== */
-
-/* Tablets */
-@media (max-width: 992px) {
-  body {
-    font-size: 0.95rem;
-  }
-  h1 {
-    font-size: 1.8em;
-  }
-  .container {
-    padding: 20px;
-  }
-  .inventory-list th, 
-  .inventory-list td {
-    font-size: 0.9rem;
-    padding: 10px;
-  }
-  .checksheet h2 {
-    font-size: 1.3em;
-  }
-  .checksheet ul li {
-    font-size: 0.95em;
-  }
+.remove-btn:hover { 
+  transform: scale(1.25); 
+  color: #b71c1c;
 }
 
-/* Phones */
-@media (max-width: 768px) {
-  body {
-    font-size: 0.9rem;
-  }
-  h1 {
-    font-size: 1.6em;
-  }
-  .container {
-    padding: 15px;
-  }
-  .inventory-list th, 
-  .inventory-list td {
-    font-size: 0.85rem;
-    padding: 8px;
-  }
-  .checksheet h2 {
-    font-size: 1.2em;
-  }
-  .checksheet ul li {
-    font-size: 0.9em;
-  }
-}
-
-/* Small Phones */
-@media (max-width: 480px) {
-  body {
-    font-size: 0.85rem;
-  }
-  h1 {
-    font-size: 1.3em;
-  }
-  .container {
-    padding: 10px;
-  }
-  .inventory-list th, 
-  .inventory-list td {
-    font-size: 0.8rem;
-    padding: 6px;
-  }
-  .checksheet h2 {
-    font-size: 1.1em;
-  }
-  .checksheet ul li {
-    font-size: 0.85em;
-  }
-}
-/* ===== General Styles ===== */
-#checksheetList {
-  margin-top: 20px;
-  padding: 10px;
-}
-
-#checksheetList h3 {
-  margin: 10px 0;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 1.2rem;
+/* ===== Category Badges (Cleaned) ===== */
+.category-badge {
   display: inline-block;
-  font-weight: bold;
-  color: #fff;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: 10px;
+  text-transform: uppercase;
 }
-
-/* ===== Category Group Headers ===== */
-#barang_pasaran-section h3 {
-  background: #4CAF50; /* Green */
-}
-
-#barang_runcit-section h3 {
-  background: #2196F3; /* Blue */
-}
-
-#barang_kering-section h3 {
-  background: #FF9800; /* Orange */
-}
-
-/* ===== Item List ===== */
-#checksheetList ul {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 10px;
-}
-
-#checksheetList li {
-  display: flex;
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: none; /* hidden by default */
+  justify-content: center;
   align-items: center;
-  gap: 10px;
-  background: #f9f9f9;
-  padding: 6px 10px;
-  margin: 5px 0;
-  border-radius: 6px;
-  border-left: 4px solid #ccc;
-  transition: 0.2s ease;
+  flex-direction: column;
+  z-index: 9999;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #007bff;
+  backdrop-filter: blur(3px);
 }
 
-#checksheetList li:hover {
-  background: #f1f1f1;
-  transform: translateX(4px);
+.car-container {
+  position: relative;
+  width: 200px;
+  height: 60px;
+  overflow: hidden;
+  margin-bottom: 15px;
 }
 
-/* Quantity input */
-#checksheetList li input[type="number"] {
-  width: 60px;
-  padding: 4px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  text-align: center;
+.car {
+  font-size: 2.5rem;
+  position: absolute;
+  top: 0;
+  left: -60px;
+  animation: drive 2s linear infinite;
 }
 
-/* Unit dropdown */
-#checksheetList li select {
-  padding: 4px 6px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background: #fff;
+.road {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 6px;
+  background: repeating-linear-gradient(
+    to right,
+    #555 0,
+    #555 20px,
+    #ddd 20px,
+    #ddd 40px
+  );
 }
 
-/* Remove button */
-#checksheetList li .remove-btn {
-  background: #e53935;
-  color: #fff;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: 0.2s ease;
+@keyframes drive {
+  0% { left: -60px; }
+  100% { left: 220px; }
 }
 
-#checksheetList li .remove-btn:hover {
-  background: #c62828;
-}
+
+
+
+/* Vegetables */ .category-vegetables .category-badge { background: #d4f3d4; color: #2e7d32; }
+/* Spices */ .category-spices .category-badge { background: #ffe0e0; color: #c62828; }
+/* Staples */ .category-staples .category-badge { background: #fff3cd; color: #856404; }
+/* Dairy */ .category-dairy .category-badge { background: #e0f0ff; color: #0056b3; }
+/* Meats */ .category-meats .category-badge { background: #fde2e2; color: #b71c1c; }
+/* Seasoning */ .category-seasoning .category-badge { background: #efe0ff; color: #6a1b9a; }
+/* Nonfood */ .category-nonfood .category-badge { background: #e9ecef; color: #495057; }
+
 
 
 </style>
@@ -485,15 +355,26 @@ h1 {
       </ul>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="buttons">
-      <button class="primary-btn" onclick="copyChecksheet()">📋 Copy</button>
-      <button class="secondary-btn" onclick="printChecksheet()">🖨️ Print</button>
-      <button class="success-btn" onclick="saveToFirebase()">💾 Save</button>
-      <button class="info-btn" onclick="window.location.href='inventoryhistory.html';">📜 View History</button>
-      <button class="warning-btn" onclick="window.location.href='display.html';">📊 Order View</button>
-    </div>
+<!-- Action Buttons -->
+<div class="buttons">
+  <button class="primary-btn" onclick="copyChecksheet()">📋 Copy</button>
+  <button class="secondary-btn" onclick="printChecksheet()">🖨️ Print</button>
+  <button id="saveBtn" class="success-btn" onclick="saveToFirebase()">💾 Save</button>
+  <button class="info-btn" onclick="window.location.href='inventoryhistory.html';">📜 View History</button>
+  <button class="warning-btn" onclick="window.location.href='display.html';">📊 Order View</button>
+</div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="car-container">
+    <div class="car">🚗</div>
+    <div class="road"></div>
   </div>
+  <span>Saving To Firebase...</span>
+</div>
+
+
 
   <!-- Scroll to Bottom Button -->
   <button id="scrollBottomBtn" onclick="scrollToBottom()" class="scroll-btn">⬇️</button>
@@ -836,10 +717,19 @@ function addToChecksheet(itemName) {
 
   // Save checksheet to Firebase with proper categorization
 function saveToFirebase() {
+  const saveBtn = document.getElementById("saveBtn");
+  const loadingOverlay = document.getElementById("loadingOverlay");
+
+  // Prevent double click
+  if (saveBtn.classList.contains("loading")) return;
+
+  // Show overlay + disable button
+  saveBtn.classList.add("loading");
+  loadingOverlay.style.display = "flex";
+
   const checksheetItems = [];
   const checksheetList = document.getElementById("checksheetList").children;
 
-  // Loop through each category section and its items
   for (let i = 0; i < checksheetList.length; i++) {
     const categorySection = checksheetList[i];
     const categoryTitle = categorySection.querySelector("h3").textContent;
@@ -859,27 +749,28 @@ function saveToFirebase() {
     });
   }
 
-  // Save to Firebase
-  const today = new Date().toISOString().split('T')[0]; // Get today's date (YYYY-MM-DD)
+  const today = new Date().toISOString().split('T')[0];
   const ref = db.ref('checklists/' + today);
 
-  // Get the existing data for today's date (if any) and append the new items
   ref.once('value', (snapshot) => {
     const existingItems = snapshot.val() ? snapshot.val().items : [];
-    const allItems = existingItems.concat(checksheetItems); // Combine existing and new items
+    const allItems = existingItems.concat(checksheetItems);
 
-    // Update Firebase with the combined items
-    ref.update({
-      items: allItems
-    }, (error) => {
+    ref.update({ items: allItems }, (error) => {
+      // Hide overlay + enable button
+      saveBtn.classList.remove("loading");
+      loadingOverlay.style.display = "none";
+
       if (error) {
-        alert('Error saving to Firebase: ' + error);
+        alert('❌ Error saving to Firebase: ' + error);
       } else {
-        alert('Checksheet saved to Firebase successfully!');
+        alert('✅ Checksheet saved to Firebase successfully!');
       }
     });
   });
 }
+
+
 
     // Initialize the page by displaying all items and adding timestamp
     window.onload = () => {
